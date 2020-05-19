@@ -357,7 +357,7 @@ else if ( $action == "all_name" )
 
 	while ( $file = readdir($dir) )
 	{
-		if ( $file{0} == "." )
+		if ( $file[0] == "." )
 			continue;
 
 		$afile = preg_replace("/(.*?)\.md/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
@@ -387,7 +387,7 @@ else if ( $action == "all_date" )
 	$filelist = array();
 	while ( $file = readdir($dir) )
 	{
-		if ( $file{0} == "." )
+		if ( $file[0] == "." )
 			continue;
 			
 		$filelist[preg_replace("/(.*?)\.md/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file)] = filemtime(PAGES_PATH . "/$file");
@@ -415,7 +415,7 @@ else if ( $action == "search" )
 		
 		while ( $file = readdir($dir) )
 		{
-			if ( $file{0} == "." )
+			if ( $file[0] == "." )
 				continue;
 
 			$text = file_get_contents(PAGES_PATH . "/$file");
