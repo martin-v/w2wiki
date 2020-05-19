@@ -71,10 +71,11 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 		
 		print "<link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
 		print "<title>Log In</title>\n";
+		print "<h1>Log In</h1>";
 		print "</head>\n";
-		print "<body><form method=\"post\">";
-		print "<input type=\"password\" name=\"p\">\n";
-		print "<input type=\"submit\" value=\"Go\"></form>";
+		print "<body class='login'><form method=\"post\">";
+		print "Password: <input type=\"password\" name=\"p\">\n";
+		print "<input type=\"submit\" value=\"Log In\"></form>";
 		print "</body></html>";
 		exit;
 	}
