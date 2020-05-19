@@ -102,7 +102,7 @@ function printToolbar()
 		print '<a class="tool" href="' . SELF . '?action=logout">Exit</a>';
 
 	print "<form method=\"post\" action=\"" . SELF . "?action=search\">\n";
-	print "<input class=\"tool\" placeholder=\"Search\" size=\"6\" id=\"search\" type=\"text\" name=\"q\" /></form>\n";
+	print "<input class=\"searchbar\" placeholder=\"Search\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" /></form>\n";
 		
 	print "</div>\n";
 }
