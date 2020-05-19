@@ -276,7 +276,6 @@ else if ( $action == "uploaded" )
 				$error_code = $_FILES['userfile']['error'];
 				if ( $error_code === 0 ) {
 					// Likely a permissions issue
-					$path = BASE_PATH . "/images/$dstName";
 					$html = "<p class=\"note\">Upload error, can't write to ".$path."<br/><br/>\n".
 						"Check that your permissions are set correctly.</p>\n";
 				} else {
