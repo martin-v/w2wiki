@@ -11,7 +11,7 @@
  * Written with Coda: <http://panic.com/coda/>
  *
  */
- 
+
 // Install PSR-4-compatible class autoloader
 spl_autoload_register(function($class){
 	require str_replace('\\', DIRECTORY_SEPARATOR, ltrim($class, '\\')).'.php';
@@ -36,7 +36,7 @@ if ( count($allowedIPs) > 0 )
 {
 	$ip = $_SERVER['REMOTE_ADDR'];
 	$accepted = false;
-	
+
 	foreach ( $allowedIPs as $allowed )
 	{
 		if ( strncmp($allowed, $ip, strlen($allowed)) == 0 )
@@ -45,7 +45,7 @@ if ( count($allowedIPs) > 0 )
 			break;
 		}
 	}
-	
+
 	if ( !$accepted )
 	{
 		print "<html><body>Access from IP address $ip is not allowed";
@@ -58,7 +58,7 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 {
 	if ( !defined('W2_PASSWORD_HASH') || W2_PASSWORD_HASH == '' )
 		define('W2_PASSWORD_HASH', sha1(W2_PASSWORD));
-	
+
 	if ( (isset($_POST['p'])) && (sha1($_POST['p']) == W2_PASSWORD_HASH) )
 		$_SESSION['password'] = W2_PASSWORD_HASH;
 	else
@@ -68,7 +68,7 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 		print "<head>\n";
 		print "<link rel=\"apple-touch-icon\" href=\"apple-touch-icon.png\"/>";
 		print "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=false\" />\n";
-		
+
 		print "<link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
 		print "<title>Log In</title>\n";
 		print "<h1>Log In</h1>";
@@ -97,59 +97,59 @@ function printToolbar()
  	print "<a href=\"" . SELF . "?action=all_name\">All</a> ";
 	print "<a href=\"" . SELF . "?action=all_date\">Recent</a> ";
  	print "<a href=\"" . SELF . "\">". DEFAULT_PAGE . "</a>";
- 	
+
 	if ( REQUIRE_PASSWORD )
 		print '<a class="tool" href="' . SELF . '?action=logout">Exit</a>';
 
 	print "<form method=\"post\" action=\"" . SELF . "?action=search\">\n";
 	print "<input class=\"searchbar\" placeholder=\"Search\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" /></form>\n";
-		
+
 	print "</div>\n";
 }
 
 
-function descLengthSort($val_1, $val_2) 
-{ 
+function descLengthSort($val_1, $val_2)
+{
 	$retVal = 0;
 
-	$firstVal = strlen($val_1); 
+	$firstVal = strlen($val_1);
 	$secondVal = strlen($val_2);
 
-	if ( $firstVal > $secondVal ) 
-		$retVal = -1; 
-	
-	else if ( $firstVal < $secondVal ) 
-		$retVal = 1; 
+	if ( $firstVal > $secondVal )
+		$retVal = -1;
 
-	return $retVal; 
+	else if ( $firstVal < $secondVal )
+		$retVal = 1;
+
+	return $retVal;
 }
 
 
 function toHTML($inText)
 {
 	global $page;
-	
+
 	$dir = opendir(PAGES_PATH);
 	while ( $filename = readdir($dir) )
 	{
 		if ( $filename{0} == '.' )
 			continue;
-			
+
 		$filename = preg_replace("/(.*?)\.md/", "\\1", $filename);
 		$filenames[] = $filename;
 	}
 	closedir($dir);
-	
-	uasort($filenames, "descLengthSort"); 
+
+	uasort($filenames, "descLengthSort");
 
 	if ( AUTOLINK_PAGE_TITLES )
-	{	
+	{
 		foreach ( $filenames as $filename )
 		{
 	 		$inText = preg_replace("/(?<![\>\[\/])($filename)(?!\]\>)/im", "<a href=\"" . SELF . VIEW . "/$filename\">\\1</a>", $inText);
 		}
 	}
-	
+
  	$inText = preg_replace("/\[\[(.*?)\]\]/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $inText);
 	$inText = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $inText);
 	$inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
@@ -179,7 +179,7 @@ function destroy_session()
 
 if ( isset($_REQUEST['action']) )
 	$action = $_REQUEST['action'];
-else 
+else
 	$action = 'view';
 
 // Look for page name following the script name in the URL, like this:
@@ -187,9 +187,9 @@ else
 //
 // Otherwise, get page name from 'page' request variable.
 
-if ( preg_match('@^/@', @$_SERVER["PATH_INFO"]) ) 
+if ( preg_match('@^/@', @$_SERVER["PATH_INFO"]) )
 	$page = sanitizeFilename(substr($_SERVER["PATH_INFO"], 1));
-else 
+else
 	$page = sanitizeFilename(@$_REQUEST['page']);
 
 $upage = urlencode($page);
@@ -260,14 +260,14 @@ else if ( $action == "uploaded" )
 		$fileType = $_FILES['userfile']['type'];
 		preg_match('/\.([^.]+)$/', $dstName, $matches);
 		$fileExt = isset($matches[1]) ? $matches[1] : null;
-		
+
 		if (in_array($fileType, explode(',', VALID_UPLOAD_TYPES)) &&
 			in_array($fileExt, explode(',', VALID_UPLOAD_EXTS)))
 		{
 			$errLevel = error_reporting(0);
 
 			$path = BASE_PATH . "/images/$dstName";
-			if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true ) 
+			if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true )
 			{
 				$html = "<p class=\"note\">File '$dstName' uploaded</p>\n";
 			}
@@ -302,7 +302,7 @@ else if ( $action == "save" )
 	$success = file_put_contents($filename, $newText);
  	error_reporting($errLevel);
 
-	if ( $success )	
+	if ( $success )
 		$html = "<p class=\"note\">Saved</p>\n";
 	else
 		$html = "<p class=\"note\">Error saving changes! Make sure your web server has write access to " . PAGES_PATH . "</p>\n";
@@ -327,7 +327,7 @@ else if ( $action == "renamed" )
 
 	$prevpage = sanitizeFilename($pp);
 	$prevpage = urlencode($prevpage);
-	
+
 	$prevfilename = PAGES_PATH . "/$prevpage.md";
 
 	if ( rename($prevfilename, $filename) )
@@ -369,7 +369,7 @@ else if ( $action == "all_name" )
 	closedir($dir);
 
 	natcasesort($filelist);
-	
+
 	$html = "<table>";
 
 
@@ -389,7 +389,7 @@ else if ( $action == "all_date" )
 	{
 		if ( $file[0] == "." )
 			continue;
-			
+
 		$filelist[preg_replace("/(.*?)\.md/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file)] = filemtime(PAGES_PATH . "/$file");
 	}
 
@@ -412,14 +412,14 @@ else if ( $action == "search" )
 	if ( trim($q) != "" )
 	{
 		$dir = opendir(PAGES_PATH);
-		
+
 		while ( $file = readdir($dir) )
 		{
 			if ( $file[0] == "." )
 				continue;
 
 			$text = file_get_contents(PAGES_PATH . "/$file");
-			
+
                         if ( preg_match("/{$q}/i", $text) || preg_match("/{$q}/i", $file) )
 			{
 				++$matches;
@@ -427,7 +427,7 @@ else if ( $action == "search" )
 				$html .= "<li>$file</li>\n";
 			}
 		}
-		
+
 		closedir($dir);
 	}
 
@@ -443,7 +443,7 @@ $datetime = '';
 
 if ( ($action == "all_name") || ($action == "all_date"))
 	$title = "All Pages";
-	
+
 else if ( $action == "upload" )
 	$title = "Upload Image";
 
