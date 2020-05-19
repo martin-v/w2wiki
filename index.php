@@ -364,7 +364,7 @@ else if ( $action == "all_name" )
 		$afile = preg_replace("/(.*?)\.md/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
 		$efile = preg_replace("/(.*?)\.md/", "<a href=\"?action=edit&amp;page=\\1\">edit</a>", urlencode($file));
 
-		array_push($filelist, "<tr><td>$afile</td><td width=\"20\"></td><td>$efile</td></tr>");
+		array_push($filelist, "<tr><td>$afile</td><td width=\"20\"></td><td>$efile</td></tr>\n");
 	}
 
 	closedir($dir);
