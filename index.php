@@ -287,14 +287,25 @@ else if ( $action == "uploaded" )
 		{
 			$errLevel = error_reporting(0);
 
-			if ( move_uploaded_file($_FILES['userfile']['tmp_name'], 
-				BASE_PATH . "/images/$dstName") === true ) 
+			$path = BASE_PATH . "/images/$dstName";
+			if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true ) 
 			{
 				$html = "<p class=\"note\">File '$dstName' uploaded</p>\n";
 			}
 			else
 			{
-				$html = "<p class=\"note\">Upload error</p>\n";
+				$error_code = $_FILES['userfile']['error'];
+				if ( $error_code === 0 ) {
+					// Likely a permissions issue
+					$path = BASE_PATH . "/images/$dstName";
+					$html = "<p class=\"note\">Upload error, can't write to ".$path."<br/><br/>\n".
+						"Check that your permissions are set correctly.</p>\n";
+				} else {
+					// Give generic error message
+					$html = "<p class=\"note\">Upload error, error #".$error_code."<br/><br/>\n".
+						"Please see <a href=\"https://www.php.net/manual/en/features.file-upload.errors.php\">here</a> for more information.<br/><br/>\n".
+						"If you see this message, please file a bug to improve w2wiki.</p>";
+				}
 			}
 
 			error_reporting($errLevel);
