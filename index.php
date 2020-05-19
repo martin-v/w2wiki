@@ -356,8 +356,6 @@ else if ( $action == "all_name" )
 	$dir = opendir(PAGES_PATH);
 	$filelist = array();
 
-	$color = "#eeeeee";
-
 	while ( $file = readdir($dir) )
 	{
 		if ( $file{0} == "." )
@@ -366,12 +364,7 @@ else if ( $action == "all_name" )
 		$afile = preg_replace("/(.*?)\.md/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
 		$efile = preg_replace("/(.*?)\.md/", "<a href=\"?action=edit&amp;page=\\1\">edit</a>", urlencode($file));
 
-		array_push($filelist, "<tr style=\"background-color: $color;\"><td>$afile</td><td width=\"20\"></td><td>$efile</td></tr>");
-
-		if ( $color == "#eeeeee" )
-			$color = "#e4e4e4";
-		else
-			$color = "#eeeeee";
+		array_push($filelist, "<tr><td>$afile</td><td width=\"20\"></td><td>$efile</td></tr>");
 	}
 
 	closedir($dir);
@@ -403,17 +396,11 @@ else if ( $action == "all_date" )
 
 	closedir($dir);
 
-	$color = "#eeeeee";
 	arsort($filelist, SORT_NUMERIC);
 
 	foreach ($filelist as $key => $value)
 	{
-		$html .= "<tr style=\"background-color: $color;\"><td valign=\"top\">$key</td><td width=\"20\"></td><td valign=\"top\"><nobr>" . date(TITLE_DATE_NO_TIME, $value) . "</nobr></td></tr>\n";
-		
-		if ( $color == "#eeeeee" )
-			$color = "#e4e4e4";
-		else
-			$color = "#eeeeee";
+		$html .= "<tr><td valign=\"top\">$key</td><td width=\"20\"></td><td valign=\"top\"><nobr>" . date(TITLE_DATE_NO_TIME, $value) . "</nobr></td></tr>\n";
 	}
 	$html .= "</table>\n";
 }

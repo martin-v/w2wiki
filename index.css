@@ -113,6 +113,14 @@ table, td {
 	padding: 2px;
 }
 
+tr:nth-child(even) {
+	background: #e4e4e4;
+}
+
+tr:nth-child(odd) {
+	background: #eeeeee;
+}
+
 textarea {
 	font-family: Menlo, Courier, monospace;
 	font-size: 11px;
