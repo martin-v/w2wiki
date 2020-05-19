@@ -135,7 +135,7 @@ function toHTML($inText)
 		if ( $filename{0} == '.' )
 			continue;
 			
-		$filename = preg_replace("/(.*?)\.txt/", "\\1", $filename);
+		$filename = preg_replace("/(.*?)\.md/", "\\1", $filename);
 		$filenames[] = $filename;
 	}
 	closedir($dir);
@@ -197,7 +197,7 @@ $upage = urlencode($page);
 if ( $page == "" )
 	$page = DEFAULT_PAGE;
 
-$filename = PAGES_PATH . "/$page.txt";
+$filename = PAGES_PATH . "/$page.md";
 
 if ( file_exists($filename) )
 {
@@ -329,7 +329,7 @@ else if ( $action == "renamed" )
 	$prevpage = sanitizeFilename($pp);
 	$prevpage = urlencode($prevpage);
 	
-	$prevfilename = PAGES_PATH . "/$prevpage.txt";
+	$prevfilename = PAGES_PATH . "/$prevpage.md";
 
 	if ( rename($prevfilename, $filename) )
 	{
@@ -363,8 +363,8 @@ else if ( $action == "all_name" )
 		if ( $file{0} == "." )
 			continue;
 
-		$afile = preg_replace("/(.*?)\.txt/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
-		$efile = preg_replace("/(.*?)\.txt/", "<a href=\"?action=edit&amp;page=\\1\">edit</a>", urlencode($file));
+		$afile = preg_replace("/(.*?)\.md/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
+		$efile = preg_replace("/(.*?)\.md/", "<a href=\"?action=edit&amp;page=\\1\">edit</a>", urlencode($file));
 
 		array_push($filelist, "<tr style=\"background-color: $color;\"><td>$afile</td><td width=\"20\"></td><td>$efile</td></tr>");
 
@@ -398,7 +398,7 @@ else if ( $action == "all_date" )
 		if ( $file{0} == "." )
 			continue;
 			
-		$filelist[preg_replace("/(.*?)\.txt/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file)] = filemtime(PAGES_PATH . "/$file");
+		$filelist[preg_replace("/(.*?)\.md/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file)] = filemtime(PAGES_PATH . "/$file");
 	}
 
 	closedir($dir);
@@ -437,7 +437,7 @@ else if ( $action == "search" )
                         if ( preg_match("/{$q}/i", $text) || preg_match("/{$q}/i", $file) )
 			{
 				++$matches;
-				$file = preg_replace("/(.*?)\.txt/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
+				$file = preg_replace("/(.*?)\.md/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
 				$html .= "<li>$file</li>\n";
 			}
 		}
