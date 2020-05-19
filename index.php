@@ -175,27 +175,6 @@ function destroy_session()
 	unset($_SESSION);
 }
 
-// Support PHP4 by defining file_put_contents if it doesn't already exist
-
-if ( !function_exists('file_put_contents') )
-{
-    function file_put_contents($n, $d)
-    {
-		$f = @fopen($n, "w");
-		
-		if ( !$f )
-		{
-			return false;
-		}
-		else
-		{
-			fwrite($f, $d);
-			fclose($f);
-			return true;
-		}
-    }
-}
-
 // Main code
 
 if ( isset($_REQUEST['action']) )
