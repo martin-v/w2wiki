@@ -356,7 +356,7 @@ else if ( $action == "all_name" )
 	$dir = opendir(PAGES_PATH);
 	$filelist = array();
 
-	$color = "#ffffff";
+	$color = "#eeeeee";
 
 	while ( $file = readdir($dir) )
 	{
@@ -368,10 +368,10 @@ else if ( $action == "all_name" )
 
 		array_push($filelist, "<tr style=\"background-color: $color;\"><td>$afile</td><td width=\"20\"></td><td>$efile</td></tr>");
 
-		if ( $color == "#ffffff" )
-			$color = "#f4f4f4";
+		if ( $color == "#eeeeee" )
+			$color = "#e4e4e4";
 		else
-			$color = "#ffffff";
+			$color = "#eeeeee";
 	}
 
 	closedir($dir);
@@ -403,17 +403,17 @@ else if ( $action == "all_date" )
 
 	closedir($dir);
 
-	$color = "#ffffff";
+	$color = "#eeeeee";
 	arsort($filelist, SORT_NUMERIC);
 
 	foreach ($filelist as $key => $value)
 	{
 		$html .= "<tr style=\"background-color: $color;\"><td valign=\"top\">$key</td><td width=\"20\"></td><td valign=\"top\"><nobr>" . date(TITLE_DATE_NO_TIME, $value) . "</nobr></td></tr>\n";
 		
-		if ( $color == "#ffffff" )
-			$color = "#f4f4f4";
+		if ( $color == "#eeeeee" )
+			$color = "#e4e4e4";
 		else
-			$color = "#ffffff";
+			$color = "#eeeeee";
 	}
 	$html .= "</table>\n";
 }
