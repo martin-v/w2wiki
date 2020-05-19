@@ -161,7 +161,7 @@ textarea {
 	padding: 4px 4px 4px 12px;
 }
 
-a.tool {
+.toolbar > a {
 	font-size: 11px;
 	margin-right: 8px;
 	color: #eeeeee;
