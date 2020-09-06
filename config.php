@@ -29,6 +29,13 @@ define('BASE_PATH', getcwd());
 
 define('PAGES_PATH', BASE_PATH . '/pages');
 
+// PAGES_EXT
+//
+// The extension of the Markdown files in the PAGES_PATH
+// folder which are displayed by W2
+define('PAGES_EXT', 'txt');
+
+
 // BASE_URI
 //
 // The base URI for this W2 installation.  You only need to change this if we guess wrong.
