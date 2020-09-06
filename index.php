@@ -314,7 +314,10 @@ else if ( $action == "save" )
 
 	if ( $success )	
 	{
-		exec('cd '.PAGES_PATH.' && git add -A && git commit -m "Changes via W2Wiki" && git push');
+		if (GIT_PUSH_ENABLED)
+		{
+			exec('cd '.PAGES_PATH.' && git add -A && git commit -m "Changes via W2Wiki" && git push');
+		}
 		$html = "<p class=\"note\">Saved</p>\n";
 	}
 	else

@@ -170,4 +170,14 @@ define('W2_SESSION_LIFETIME', 60 * 60 * 24 * 30);
 
 define('W2_SESSION_NAME', 'W2');
 
+
+// -----------------------------
+// Git Integration
+// -----------------------------
+
+// GIT_UPLOAD
+//
+// Enable/Disable pushing changes in page folder to git repository
+define('GIT_PUSH_ENABLED', false);
+
 ?>
