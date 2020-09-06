@@ -32,21 +32,24 @@ li {
 }
 
 h1 {
-	font-size: 20px;
+	font-size: 2em;
 	font-weight: bold;
-	margin-bottom: 8px;
+	margin-bottom: 4px;
+	margin-top: .6em;
 }
 
 h2 {
-	font-size: 16px;
+	font-size: 1.6em;
 	font-weight: bold;
-	margin-bottom: 8px;
+	margin-bottom: 4px;
+	margin-top: .4em;
 }
 
 h3 {
-	font-size: 13px;
+	font-size: 1.2em;
 	font-weight: bold;
-	margin-bottom: 8px;
+	margin-bottom: 4px;
+	margin-top: .4em;
 }
 
 hr {
@@ -58,22 +61,15 @@ hr {
 	margin-bottom: 12px;
 }
 
-ul {
-	padding-left: 12px;
-	margin-left: 12px;
-	margin-bottom: 12px;
+ul,
+ol {
+	margin-left: 1em;
+	margin-bottom: .5em;
 	list-style-position: inside;
 }
 
-ol {
-	margin-left: 12px;
-	margin-bottom: 12px;
-	padding-left: 12px;
-        list-style-position: inside;
-}
-
 p {
-	margin: 12px 12px 12px 12px;
+	margin-bottom: .5em;
 }
 
 pre {
@@ -88,6 +84,10 @@ pre {
 	white-space: -pre-wrap;      /* Opera 4-6 */
 	white-space: -o-pre-wrap;    /* Opera 7 */
 	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+
+	background: #ffffbb;
+	border: 1px dashed gray;
+	padding: 0.2em;
 }
 
 code {
@@ -134,27 +134,66 @@ textarea {
 .titledate {
 	font-size: 10px;
 	color: #999999;
+	margin-left: 1em;
 }
 
 .toolbar {
 	background-color: #777777;
-    background: -webkit-gradient(linear, left top, left bottom, from(#666666), to(#444444));
-	font-size: 12px;
+	background: -webkit-gradient(linear, left top, left bottom, from(#666666), to(#444444));
 	padding: 4px 4px 4px 12px;
+	font-size: 1em;
 }
 
 a.tool {
-	font-size: 11px;
+	font-size: 1em;
 	margin-right: 8px;
 	color: #eeeeee;
+	text-decoration: none;
+}
+
+a.tool:hover {
+	text-decoration: underline;
+}
+
+input {
+	font-size: 1em;
 }
 
 input.tool {
-	font-size: 11px;
 	color: #000000;
+	width: 10em;
+	padding: .1em;
+	padding-left: .5em;
+}
+
+input.tool:focus {
+	width: 15em;
+}
+
+input[type="button"],
+input[type="submit"] {
+	border:none;
+	border-radius: 3px;
+	padding: .5em 1em;
+	cursor: pointer;
+}
+
+input[type="submit"] {
+	background-color: rgb(30, 101, 201);
+	color: white;
+}
+input[type="button"] {
+	background-color: rgb(220, 220, 220);
+}
+
+input[type="submit"]:hover {
+	background-color: rgb(69, 135, 226);
+}
+input[type="button"]:hover {
+	background-color: rgb(200, 200, 200);
 }
 
 img {
-    max-width: 100%;
-    height: auto;
+	max-width: 100%;
+	height: auto;
 }
