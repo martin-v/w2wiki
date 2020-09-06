@@ -64,8 +64,9 @@ hr {
 ul,
 ol {
 	margin-left: 1em;
+	padding-left: .5em;
 	margin-bottom: .5em;
-	list-style-position: inside;
+	list-style-position: outside;
 }
 
 p {
