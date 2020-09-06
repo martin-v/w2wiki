@@ -313,9 +313,14 @@ else if ( $action == "save" )
  	error_reporting($errLevel);
 
 	if ( $success )	
+	{
+		exec('cd '.PAGES_PATH.' && git add -A && git commit -m "Changes via W2Wiki" && git push');
 		$html = "<p class=\"note\">Saved</p>\n";
+	}
 	else
+	{
 		$html = "<p class=\"note\">Error saving changes! Make sure your web server has write access to " . PAGES_PATH . "</p>\n";
+	}
 
 	$html .= toHTML($newText);
 }
