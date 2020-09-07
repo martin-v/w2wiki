@@ -79,7 +79,6 @@ p {
 
 pre {
 	font-family: Menlo, Courier, monospace;
-	font-size: 11px;
 	margin-left: 12px;
 	margin-bottom: 12px;
 
@@ -180,7 +179,7 @@ input#gitmsg
 	text-decoration: none;
 }
 
-a.tool:hover {
+.toolbar > a:hover {
 	text-decoration: underline;
 }
 
@@ -188,7 +187,7 @@ input {
 	font-size: 1em;
 }
 
-.searchbar {
+input.search {
 	font-size: 11px;
 	color: #000000;
 	width: 10em;
@@ -196,7 +195,7 @@ input {
 	padding-left: .5em;
 }
 
-input.tool:focus {
+input.search:focus {
 	width: 15em;
 }
 

@@ -99,10 +99,10 @@ function printToolbar()
  	print "<a href=\"" . SELF . "\">". DEFAULT_PAGE . "</a>";
 
 	if ( REQUIRE_PASSWORD )
-		print '<a class="tool" href="' . SELF . '?action=logout">Exit</a>';
+		print '<a href="' . SELF . '?action=logout">Exit</a>';
 
 	print "<form method=\"post\" action=\"" . SELF . "?action=search\">\n";
-	print "<input class=\"searchbar\" placeholder=\"Search\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" /></form>\n";
+	print "<input class=\"search\" placeholder=\"Search\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" /></form>\n";
 
 	print "</div>\n";
 }
