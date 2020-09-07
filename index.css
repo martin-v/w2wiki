@@ -111,6 +111,16 @@ textarea {
 	background-color: #ffffee;
 }
 
+input[type="text"],
+textarea {
+	padding: 2px;
+}
+
+input#gitmsg
+{
+	width: 60%;
+}
+
 .main {	
 	padding: 8px;
 }
