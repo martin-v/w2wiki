@@ -245,6 +245,11 @@ if ( $action == "edit" || $action == "new" )
 		$text = "";
 
 	$html .= "<p><textarea id=\"text\" name=\"newText\" rows=\"" . EDIT_ROWS . "\">$text</textarea></p>\n";
+	if (GIT_PUSH_ENABLED)
+	{
+		$html .= "<p>Message: <input type=\"text\" id=\"gitmsg\" name=\"gitmsg\" /></p>\n";
+	}
+
 	$html .= "<p><input type=\"hidden\" name=\"action\" value=\"save\" />";
 	$html .= "<input id=\"save\" type=\"submit\" value=\"Save\" />\n";
 	$html .= "<input id=\"cancel\" type=\"button\" onclick=\"history.go(-1);\" value=\"Cancel\" /></p>\n";
@@ -316,7 +321,11 @@ else if ( $action == "save" )
 	{
 		if (GIT_PUSH_ENABLED)
 		{
-			exec('cd '.PAGES_PATH.' && git add -A && git commit -m "Changes via W2Wiki" && git push');
+			$usermsg = $_REQUEST['gitmsg'];
+			$commitmsg = $page . ($usermsg !== '' ?
+				(": ".$usermsg) :
+				" changed");
+			exec('cd '.PAGES_PATH.' && git add -A && git commit -m "'.$commitmsg.'" && git push');
 		}
 		$html = "<p class=\"note\">Saved</p>\n";
 	}
