@@ -1,6 +1,8 @@
 w2wiki
 ======
 
+[![Build Status](https://travis-ci.com/nickodell/w2wiki.svg?branch=master)](https://travis-ci.com/nickodell/w2wiki)
+
 ### W2 by Steven Frank
 
 #### A web-based, wiki-like notepad that you host yourself.

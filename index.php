@@ -11,7 +11,7 @@
  * Written with Coda: <http://panic.com/coda/>
  *
  */
- 
+
 // Install PSR-4-compatible class autoloader
 spl_autoload_register(function($class){
 	require str_replace('\\', DIRECTORY_SEPARATOR, ltrim($class, '\\')).'.php';
@@ -36,7 +36,7 @@ if ( count($allowedIPs) > 0 )
 {
 	$ip = $_SERVER['REMOTE_ADDR'];
 	$accepted = false;
-	
+
 	foreach ( $allowedIPs as $allowed )
 	{
 		if ( strncmp($allowed, $ip, strlen($allowed)) == 0 )
@@ -45,7 +45,7 @@ if ( count($allowedIPs) > 0 )
 			break;
 		}
 	}
-	
+
 	if ( !$accepted )
 	{
 		print "<html><body>Access from IP address $ip is not allowed";
@@ -58,7 +58,7 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 {
 	if ( !defined('W2_PASSWORD_HASH') || W2_PASSWORD_HASH == '' )
 		define('W2_PASSWORD_HASH', sha1(W2_PASSWORD));
-	
+
 	if ( (isset($_POST['p'])) && (sha1($_POST['p']) == W2_PASSWORD_HASH) )
 		$_SESSION['password'] = W2_PASSWORD_HASH;
 	else
@@ -68,13 +68,14 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 		print "<head>\n";
 		print "<link rel=\"apple-touch-icon\" href=\"apple-touch-icon.png\"/>";
 		print "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=false\" />\n";
-		
+
 		print "<link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
 		print "<title>Log In</title>\n";
+		print "<h1>Log In</h1>";
 		print "</head>\n";
-		print "<body><form method=\"post\">";
-		print "<input type=\"password\" name=\"p\">\n";
-		print "<input type=\"submit\" value=\"Go\"></form>";
+		print "<body class='login'><form method=\"post\">";
+		print "Password: <input type=\"password\" name=\"p\">\n";
+		print "<input type=\"submit\" value=\"Log In\"></form>";
 		print "</body></html>";
 		exit;
 	}
@@ -87,68 +88,68 @@ function printToolbar()
 	global $upage, $page, $action;
 
 	print "<div class=\"toolbar\">";
-	print "<a class=\"tool first\" href=\"" . SELF . "?action=edit&amp;page=$upage\">Edit</a> ";
-	print "<a class=\"tool\" href=\"" . SELF . "?action=new\">New</a> ";
+	print "<a class=\"first\" href=\"" . SELF . "?action=edit&amp;page=$upage\">Edit</a> ";
+	print "<a href=\"" . SELF . "?action=new\">New</a> ";
 
 	if ( !DISABLE_UPLOADS )
-		print "<a class=\"tool\" href=\"" . SELF . VIEW . "?action=upload\">Upload</a> ";
+		print "<a href=\"" . SELF . VIEW . "?action=upload\">Upload</a> ";
 
- 	print "<a class=\"tool\" href=\"" . SELF . "?action=all_name\">All</a> ";
-	print "<a class=\"tool\" href=\"" . SELF . "?action=all_date\">Recent</a> ";
- 	print "<a class=\"tool\" href=\"" . SELF . "\">". DEFAULT_PAGE . "</a>";
- 	
+ 	print "<a href=\"" . SELF . "?action=all_name\">All</a> ";
+	print "<a href=\"" . SELF . "?action=all_date\">Recent</a> ";
+ 	print "<a href=\"" . SELF . "\">". DEFAULT_PAGE . "</a>";
+
 	if ( REQUIRE_PASSWORD )
 		print '<a class="tool" href="' . SELF . '?action=logout">Exit</a>';
 
 	print "<form method=\"post\" action=\"" . SELF . "?action=search\">\n";
-	print "<input class=\"tool\" placeholder=\"Search\" size=\"6\" id=\"search\" type=\"text\" name=\"q\" /></form>\n";
-		
+	print "<input class=\"searchbar\" placeholder=\"Search\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" /></form>\n";
+
 	print "</div>\n";
 }
 
 
-function descLengthSort($val_1, $val_2) 
-{ 
+function descLengthSort($val_1, $val_2)
+{
 	$retVal = 0;
 
-	$firstVal = strlen($val_1); 
+	$firstVal = strlen($val_1);
 	$secondVal = strlen($val_2);
 
-	if ( $firstVal > $secondVal ) 
-		$retVal = -1; 
-	
-	else if ( $firstVal < $secondVal ) 
-		$retVal = 1; 
+	if ( $firstVal > $secondVal )
+		$retVal = -1;
 
-	return $retVal; 
+	else if ( $firstVal < $secondVal )
+		$retVal = 1;
+
+	return $retVal;
 }
 
 
 function toHTML($inText)
 {
 	global $page;
-	
+
 	$dir = opendir(PAGES_PATH);
 	while ( $filename = readdir($dir) )
 	{
 		if ( $filename{0} == '.' )
 			continue;
-			
+
 		$filename = preg_replace("/(.*?)\.".PAGES_EXT."/", "\\1", $filename);
 		$filenames[] = $filename;
 	}
 	closedir($dir);
-	
-	uasort($filenames, "descLengthSort"); 
+
+	uasort($filenames, "descLengthSort");
 
 	if ( AUTOLINK_PAGE_TITLES )
-	{	
+	{
 		foreach ( $filenames as $filename )
 		{
 	 		$inText = preg_replace("/(?<![\>\[\/])($filename)(?!\]\>)/im", "<a href=\"" . SELF . VIEW . "/$filename\">\\1</a>", $inText);
 		}
 	}
-	
+
  	$inText = preg_replace("/\[\[(.*?)\]\]/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $inText);
 	$inText = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $inText);
 	$inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
@@ -174,32 +175,11 @@ function destroy_session()
 	unset($_SESSION);
 }
 
-// Support PHP4 by defining file_put_contents if it doesn't already exist
-
-if ( !function_exists('file_put_contents') )
-{
-    function file_put_contents($n, $d)
-    {
-		$f = @fopen($n, "w");
-		
-		if ( !$f )
-		{
-			return false;
-		}
-		else
-		{
-			fwrite($f, $d);
-			fclose($f);
-			return true;
-		}
-    }
-}
-
 // Main code
 
 if ( isset($_REQUEST['action']) )
 	$action = $_REQUEST['action'];
-else 
+else
 	$action = 'view';
 
 // Look for page name following the script name in the URL, like this:
@@ -207,9 +187,9 @@ else
 //
 // Otherwise, get page name from 'page' request variable.
 
-if ( preg_match('@^/@', @$_SERVER["PATH_INFO"]) ) 
+if ( preg_match('@^/@', @$_SERVER["PATH_INFO"]) )
 	$page = sanitizeFilename(substr($_SERVER["PATH_INFO"], 1));
-else 
+else
 	$page = sanitizeFilename(@$_REQUEST['page']);
 
 $upage = urlencode($page);
@@ -285,20 +265,30 @@ else if ( $action == "uploaded" )
 		$fileType = $_FILES['userfile']['type'];
 		preg_match('/\.([^.]+)$/', $dstName, $matches);
 		$fileExt = isset($matches[1]) ? $matches[1] : null;
-		
+
 		if (in_array($fileType, explode(',', VALID_UPLOAD_TYPES)) &&
 			in_array($fileExt, explode(',', VALID_UPLOAD_EXTS)))
 		{
 			$errLevel = error_reporting(0);
 
-			if ( move_uploaded_file($_FILES['userfile']['tmp_name'], 
-				BASE_PATH . "/images/$dstName") === true ) 
+			$path = BASE_PATH . "/images/$dstName";
+			if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true )
 			{
 				$html = "<p class=\"note\">File '$dstName' uploaded</p>\n";
 			}
 			else
 			{
-				$html = "<p class=\"note\">Upload error</p>\n";
+				$error_code = $_FILES['userfile']['error'];
+				if ( $error_code === 0 ) {
+					// Likely a permissions issue
+					$html = "<p class=\"note\">Upload error, can't write to ".$path."<br/><br/>\n".
+						"Check that your permissions are set correctly.</p>\n";
+				} else {
+					// Give generic error message
+					$html = "<p class=\"note\">Upload error, error #".$error_code."<br/><br/>\n".
+						"Please see <a href=\"https://www.php.net/manual/en/features.file-upload.errors.php\">here</a> for more information.<br/><br/>\n".
+						"If you see this message, please file a bug to improve w2wiki.</p>";
+				}
 			}
 
 			error_reporting($errLevel);
@@ -317,7 +307,7 @@ else if ( $action == "save" )
 	$success = file_put_contents($filename, $newText);
  	error_reporting($errLevel);
 
-	if ( $success )	
+	if ( $success )
 	{
 		if (GIT_PUSH_ENABLED)
 		{
@@ -354,8 +344,8 @@ else if ( $action == "renamed" )
 
 	$prevpage = sanitizeFilename($pp);
 	$prevpage = urlencode($prevpage);
-	
-	$prevfilename = PAGES_PATH . "/$prevpage.txt";
+
+	$prevfilename = PAGES_PATH . "/$prevpage.md";
 
 	if ( rename($prevfilename, $filename) )
 	{
@@ -382,28 +372,21 @@ else if ( $action == "all_name" )
 	$dir = opendir(PAGES_PATH);
 	$filelist = array();
 
-	$color = "#ffffff";
-
 	while ( $file = readdir($dir) )
 	{
-		if ( $file{0} == "." )
+		if ( $file[0] == "." )
 			continue;
 
 		$afile = preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
 		$efile = preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"?action=edit&amp;page=\\1\">edit</a>", urlencode($file));
 
-		array_push($filelist, "<tr style=\"background-color: $color;\"><td>$afile</td><td width=\"20\"></td><td>$efile</td></tr>");
-
-		if ( $color == "#ffffff" )
-			$color = "#f4f4f4";
-		else
-			$color = "#ffffff";
+		array_push($filelist, "<tr><td>$afile</td><td width=\"20\"></td><td>$efile</td></tr>\n");
 	}
 
 	closedir($dir);
 
 	natcasesort($filelist);
-	
+
 	$html = "<table>";
 
 
@@ -421,25 +404,19 @@ else if ( $action == "all_date" )
 	$filelist = array();
 	while ( $file = readdir($dir) )
 	{
-		if ( $file{0} == "." )
+		if ( $file[0] == "." )
 			continue;
-			
+
 		$filelist[preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file)] = filemtime(PAGES_PATH . "/$file");
 	}
 
 	closedir($dir);
 
-	$color = "#ffffff";
 	arsort($filelist, SORT_NUMERIC);
 
 	foreach ($filelist as $key => $value)
 	{
-		$html .= "<tr style=\"background-color: $color;\"><td valign=\"top\">$key</td><td width=\"20\"></td><td valign=\"top\"><nobr>" . date(TITLE_DATE_NO_TIME, $value) . "</nobr></td></tr>\n";
-		
-		if ( $color == "#ffffff" )
-			$color = "#f4f4f4";
-		else
-			$color = "#ffffff";
+		$html .= "<tr><td valign=\"top\">$key</td><td width=\"20\"></td><td valign=\"top\"><nobr>" . date(TITLE_DATE_NO_TIME, $value) . "</nobr></td></tr>\n";
 	}
 	$html .= "</table>\n";
 }
@@ -452,14 +429,14 @@ else if ( $action == "search" )
 	if ( trim($q) != "" )
 	{
 		$dir = opendir(PAGES_PATH);
-		
+
 		while ( $file = readdir($dir) )
 		{
-			if ( $file{0} == "." )
+			if ( $file[0] == "." )
 				continue;
 
 			$text = file_get_contents(PAGES_PATH . "/$file");
-			
+
                         if ( preg_match("/{$q}/i", $text) || preg_match("/{$q}/i", $file) )
 			{
 				++$matches;
@@ -467,7 +444,7 @@ else if ( $action == "search" )
 				$html .= "<li>$file</li>\n";
 			}
 		}
-		
+
 		closedir($dir);
 	}
 
@@ -483,7 +460,7 @@ $datetime = '';
 
 if ( ($action == "all_name") || ($action == "all_date"))
 	$title = "All Pages";
-	
+
 else if ( $action == "upload" )
 	$title = "Upload Image";
 

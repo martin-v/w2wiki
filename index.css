@@ -17,6 +17,10 @@
 	padding: 0;
 }
 
+body {
+	background-color: #eeeeee;
+}
+
 blockquote {
 	background-color: #f0f8f0;
 	margin: 0px 0px 12px 20px;
@@ -104,6 +108,14 @@ table, td {
 	padding: 2px;
 }
 
+tr:nth-child(even) {
+	background: #e4e4e4;
+}
+
+tr:nth-child(odd) {
+	background: #eeeeee;
+}
+
 textarea {
 	font-family: Menlo, Courier, monospace;
 	font-size: 11px;
@@ -123,6 +135,12 @@ input#gitmsg
 
 .main {	
 	padding: 8px;
+}
+
+.login {
+	margin: 40px auto;
+	max-width: 650px;
+	line-height: 1.4;
 }
 
 .note {
@@ -155,8 +173,8 @@ input#gitmsg
 	font-size: 1em;
 }
 
-a.tool {
-	font-size: 1em;
+.toolbar > a {
+	font-size: 11px;
 	margin-right: 8px;
 	color: #eeeeee;
 	text-decoration: none;
@@ -170,7 +188,8 @@ input {
 	font-size: 1em;
 }
 
-input.tool {
+.searchbar {
+	font-size: 11px;
 	color: #000000;
 	width: 10em;
 	padding: .1em;
