@@ -100,9 +100,9 @@ function printToolbar()
 	if ( !DISABLE_UPLOADS )
 		print "<a href=\"" . SELF . VIEW . "?action=upload\">". __('Upload') ."</a>";
 
- 	print "<a href=\"" . SELF . "?action=all_name\">". __('All') ."</a> ";
+	print "<a href=\"" . SELF . "?action=all_name\">". __('All') ."</a> ";
 	print "<a href=\"" . SELF . "?action=all_date\">". __('Recent') ."</a> ";
- 	print "<a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>";
+	print "<a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>";
 
 	if ( REQUIRE_PASSWORD )
 		print "<a href=\"" . SELF . "?action=logout\">". __('Log out') . "</a>";
@@ -151,11 +151,11 @@ function toHTML($inText)
 	{
 		foreach ( $filenames as $filename )
 		{
-	 		$inText = preg_replace("/(?<![\>\[\/])($filename)(?!\]\>)/im", "<a href=\"" . SELF . VIEW . "/$filename\">\\1</a>", $inText);
+			$inText = preg_replace("/(?<![\>\[\/])($filename)(?!\]\>)/im", "<a href=\"" . SELF . VIEW . "/$filename\">\\1</a>", $inText);
 		}
 	}
 
- 	$inText = preg_replace("/\[\[(.*?)\]\]/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $inText);
+	$inText = preg_replace("/\[\[(.*?)\]\]/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $inText);
 	$inText = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $inText);
 	$inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
 
@@ -311,7 +311,7 @@ else if ( $action == "save" )
 
 	$errLevel = error_reporting(0);
 	$success = file_put_contents($filename, $newText);
- 	error_reporting($errLevel);
+	error_reporting($errLevel);
 
 	if ( $success )
 	{
