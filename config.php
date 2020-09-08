@@ -180,4 +180,18 @@ define('W2_SESSION_NAME', 'W2');
 // Enable/Disable pushing changes in page folder to git repository
 define('GIT_PUSH_ENABLED', false);
 
-?>
+// -----------------------------
+// Locale and encoding settings
+// -----------------------------
+
+// W2_CHARSET
+//
+// Value for meta charset.
+
+define('W2_CHARSET', 'UTF-8');
+
+// W2_LOCALE
+//
+// Name for locale.
+
+define('W2_LOCALE', 'ja');
