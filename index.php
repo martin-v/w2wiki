@@ -315,15 +315,21 @@ else if ( $action == "save" )
 
 	if ( $success )
 	{
+		$html = "<p class=\"note\">" . __('Saved');
 		if (GIT_PUSH_ENABLED)
 		{
 			$usermsg = $_REQUEST['gitmsg'];
-			$commitmsg = $page . ($usermsg !== '' ?
-				(": ".$usermsg) :
-				" changed");
-			exec('cd '.PAGES_PATH.' && git add -A && git commit -m "'.$commitmsg.'" && git push');
+			$commitmsg = escapeshellarg($page . ($usermsg !== '' ?  (": ".$usermsg) : " changed"));
+			$returnValue = 0;
+			$output = '';
+			$cmd = "cd ".PAGES_PATH." && git add -A && git commit -m ".$commitmsg." && git push";
+			exec($cmd, $output, $returnValue);
+			if ($returnValue != 0)
+			{
+				$html .= "<br/>Error in git command ".$cmd." (return value: ".$returnValue."): ".implode(" ", $output);
+			}
 		}
-		$html = "<p class=\"note\">" . __('Saved') . "</p>\n";
+		$html .=  "</p>\n";
 	}
 	else
 	{
