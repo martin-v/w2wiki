@@ -386,7 +386,7 @@ else if ( $action == "all_name" )
 
 	while ( $file = readdir($dir) )
 	{
-		if ( $file[0] == "." )
+		if ( $file[0] == "." || preg_match("/".PAGES_EXT."$/", $file) != 1)
 		{
 			continue;
 		}
@@ -396,7 +396,9 @@ else if ( $action == "all_name" )
 
 	natcasesort($filelist);
 
-	$html = "<table>";
+	$html .= "<p>Total: ".count($filelist)." pages</p>";
+
+	$html .= "<table>";
 
 	foreach ($filelist as $file)
 	{
@@ -415,8 +417,10 @@ else if ( $action == "all_date" )
 	$filelist = array();
 	while ( $file = readdir($dir) )
 	{
-		if ( $file[0] == "." )
+		if ( $file[0] == "." || preg_match("/".PAGES_EXT."$/", $file) != 1)
+		{
 			continue;
+		}
 
 		$filelist[preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file)] = filemtime(PAGES_PATH . "/$file");
 	}
@@ -427,7 +431,7 @@ else if ( $action == "all_date" )
 
 	foreach ($filelist as $key => $value)
 	{
-		$date_format = __('date_format_no_time', TITLE_DATE_NO_TIME);
+		$date_format = __('date_format', TITLE_DATE);
 		$html .= "<tr><td valign=\"top\">$key</td><td width=\"20\"></td><td valign=\"top\"><nobr>"
 			. date( $date_format, $value)
 			. "</nobr></td></tr>\n";
