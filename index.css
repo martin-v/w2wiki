@@ -136,6 +136,10 @@ input#gitmsg
 	padding: 8px;
 }
 
+.main a[href^="http"]::after {
+	content: url('internet.png');
+}
+
 .login {
 	margin: 40px auto;
 	max-width: 650px;
