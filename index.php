@@ -138,7 +138,9 @@ function toHTML($inText)
 	while ( $filename = readdir($dir) )
 	{
 		if ( $filename{0} == '.' )
+		{
 			continue;
+		}
 
 		$filename = preg_replace("/(.*?)\.".PAGES_EXT."/", "\\1", $filename);
 		$filenames[] = $filename;
@@ -173,8 +175,9 @@ function sanitizeFilename($inFileName)
 function destroy_session()
 {
 	if ( isset($_COOKIE[session_name()]) )
+	{
 		setcookie(session_name(), '', time() - 42000, '/');
-
+	}
 	session_destroy();
 	unset($_SESSION["password"]);
 	unset($_SESSION);
@@ -183,9 +186,13 @@ function destroy_session()
 // Main code
 
 if ( isset($_REQUEST['action']) )
+{
 	$action = $_REQUEST['action'];
+}
 else
+{
 	$action = 'view';
+}
 
 // Look for page name following the script name in the URL, like this:
 // http://stevenf.com/w2demo/index.php/Markdown%20Syntax
@@ -193,14 +200,20 @@ else
 // Otherwise, get page name from 'page' request variable.
 
 if ( preg_match('@^/@', @$_SERVER["PATH_INFO"]) )
+{
 	$page = sanitizeFilename(substr($_SERVER["PATH_INFO"], 1));
+}
 else
+{
 	$page = sanitizeFilename(@$_REQUEST['page']);
+}
 
 $upage = urlencode($page);
 
 if ( $page == "" )
+{
 	$page = DEFAULT_PAGE;
+}
 
 $filename = PAGES_PATH . "/$page.".PAGES_EXT;
 
@@ -393,26 +406,19 @@ else if ( $action == "all_name" )
 		array_push($filelist, $file);
 	}
 	closedir($dir);
-
 	natcasesort($filelist);
-
 	$html .= "<p>Total: ".count($filelist)." pages</p>";
-
 	$html .= "<table>";
-
 	foreach ($filelist as $file)
 	{
 		$afile = preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
 		$efile = preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"?action=edit&amp;page=\\1\">". __('Edit') ."</a>", urlencode($file));
-
 		$html .= "<tr><td>$afile</td><td width=\"20\"></td><td>$efile</td></tr>\n";
 	}
-
 	$html .= "</table>\n";
 }
 else if ( $action == "all_date" )
 {
-	$html = "<table>\n";
 	$dir = opendir(PAGES_PATH);
 	$filelist = array();
 	while ( $file = readdir($dir) )
@@ -421,14 +427,11 @@ else if ( $action == "all_date" )
 		{
 			continue;
 		}
-
 		$filelist[preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file)] = filemtime(PAGES_PATH . "/$file");
 	}
-
 	closedir($dir);
-
 	arsort($filelist, SORT_NUMERIC);
-
+	$html = "<table>\n";
 	foreach ($filelist as $key => $value)
 	{
 		$date_format = __('date_format', TITLE_DATE);
