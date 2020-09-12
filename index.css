@@ -140,6 +140,10 @@ input#gitmsg
 	content: url('internet.png');
 }
 
+.main a.noexist {
+	color: #b00 !important;
+}
+
 .login {
 	margin: 40px auto;
 	max-width: 650px;

@@ -134,30 +134,42 @@ function toHTML($inText)
 {
 	global $page;
 
-	$dir = opendir(PAGES_PATH);
-	while ( $filename = readdir($dir) )
-	{
-		if ( $filename{0} == '.' )
-		{
-			continue;
-		}
-
-		$filename = preg_replace("/(.*?)\.".PAGES_EXT."/", "\\1", $filename);
-		$filenames[] = $filename;
-	}
-	closedir($dir);
-
-	uasort($filenames, "descLengthSort");
-
 	if ( AUTOLINK_PAGE_TITLES )
 	{
+		$dir = opendir(PAGES_PATH);
+		while ( $filename = readdir($dir) )
+		{
+			if ( $filename{0} == '.' )
+			{
+				continue;
+			}
+			$filename = preg_replace("/(.*?)\.".PAGES_EXT."/", "\\1", $filename);
+			$filenames[] = $filename;
+		}
+		closedir($dir);
+		uasort($filenames, "descLengthSort");
+
 		foreach ( $filenames as $filename )
 		{
 			$inText = preg_replace("/(?<![\>\[\/])($filename)(?!\]\>)/im", "<a href=\"" . SELF . VIEW . "/$filename\">\\1</a>", $inText);
 		}
 	}
 
-	$inText = preg_replace("/\[\[(.*?)\]\]/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $inText);
+	preg_match_all(
+		"/\[\[(.*?)\]\]/",
+		$inText,
+		$matches,
+		PREG_PATTERN_ORDER
+	);
+	for ($i = 0; $i < count($matches[0]); $i++)
+	{
+		$linkedpage = $matches[1][$i];
+		$linkedfilename = PAGES_PATH."/$linkedpage.".PAGES_EXT;
+		$exists = file_exists($linkedfilename);
+		$inText = preg_replace("/\[\[$linkedpage\]\]/", "<a ".
+			($exists? "" : "class=\"noexist\"")
+			." href=\"" . SELF . VIEW . "/$linkedpage\">$linkedpage</a>", $inText);
+	}
 	$inText = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $inText);
 	$inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
 
@@ -209,7 +221,7 @@ if ($action === "view" || $action === "edit")
 {
 	if ( file_exists($filename) )
 	{
-		$text .= file_get_contents($filename);
+		$text = file_get_contents($filename);
 	}
 	else
 	{
