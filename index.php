@@ -185,48 +185,34 @@ function destroy_session()
 
 // Main code
 
-if ( isset($_REQUEST['action']) )
+$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'view';
+$newPage = "";
+$text = "";
+if ($action === "view" || $action === "edit")
 {
-	$action = $_REQUEST['action'];
-}
-else
-{
-	$action = 'view';
-}
+	// Look for page name following the script name in the URL, like this:
+	// http://stevenf.com/w2demo/index.php/Markdown%20Syntax
+	//
+	// Otherwise, get page name from 'page' request variable.
 
-// Look for page name following the script name in the URL, like this:
-// http://stevenf.com/w2demo/index.php/Markdown%20Syntax
-//
-// Otherwise, get page name from 'page' request variable.
-
-if ( preg_match('@^/@', @$_SERVER["PATH_INFO"]) )
-{
-	$page = sanitizeFilename(substr($_SERVER["PATH_INFO"], 1));
-}
-else
-{
-	$page = sanitizeFilename(@$_REQUEST['page']);
-}
-
-$upage = urlencode($page);
-
-if ( $page == "" )
-{
-	$page = DEFAULT_PAGE;
-}
-
-$filename = PAGES_PATH . "/$page.".PAGES_EXT;
-
-if ( file_exists($filename) )
-{
-	$text = file_get_contents($filename);
-}
-else
-{
-	$text = '';
-	if ( $action != "save" && $action != "all_name" && $action != "all_date" && $action != "upload" && $action != "new" && $action != "logout" && $action != "uploaded" && $action != "search" && $action != "view" )
+	$page = preg_match('@^/@', @$_SERVER["PATH_INFO"]) ?
+		substr($_SERVER["PATH_INFO"], 1) : @$_REQUEST['page'];
+	$page = sanitizeFilename($page);
+	$upage = urlencode($page);
+	if ( $page == "" )
 	{
-		$action = "edit";
+		$page = DEFAULT_PAGE;
+	}
+
+	$filename = PAGES_PATH . "/$page.".PAGES_EXT;
+	if ( file_exists($filename) )
+	{
+		$text .= file_get_contents($filename);
+	}
+	else
+	{
+		$newPage = $page;
+		$action = "new";
 	}
 }
 
@@ -236,12 +222,17 @@ if ( $action == "edit" || $action == "new" )
 	$html = "<form id=\"edit\" method=\"post\" action=\"$formAction\">\n";
 
 	if ( $action == "edit" )
+	{
 		$html .= "<input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
+	}
 	else
-		$html .= '<p>' . __('Title') . ': <input id="title" type="text" name="page" /></p>' . "\n";
-
-	if ( $action == "new" )
-		$text = "";
+	{
+		if ($newPage != "")
+		{
+			$html .= "<p class=\"note\">". __('Creating new page since no page with given title exists!') ."</p>\n";
+		}
+		$html .= "<p>" . __('Title') . ": <input id=\"title\" type=\"text\ name=\"page\" value=\"$newPage\" /></p>\n";
+	}
 
 	$html .= "<p><textarea id=\"text\" name=\"newText\" rows=\"" . EDIT_ROWS . "\">$text</textarea></p>\n";
 	if (GIT_PUSH_ENABLED)
