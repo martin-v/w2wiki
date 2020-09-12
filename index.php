@@ -188,7 +188,7 @@ function destroy_session()
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'view';
 $newPage = "";
 $text = "";
-if ($action === "view" || $action === "edit")
+if ($action === "view" || $action === "edit" || $action === "save")
 {
 	// Look for page name following the script name in the URL, like this:
 	// http://stevenf.com/w2demo/index.php/Markdown%20Syntax
@@ -203,8 +203,10 @@ if ($action === "view" || $action === "edit")
 	{
 		$page = DEFAULT_PAGE;
 	}
-
 	$filename = PAGES_PATH . "/$page.".PAGES_EXT;
+}
+if ($action === "view" || $action === "edit")
+{
 	if ( file_exists($filename) )
 	{
 		$text .= file_get_contents($filename);
