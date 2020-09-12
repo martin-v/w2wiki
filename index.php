@@ -471,17 +471,16 @@ else
 $datetime = '';
 
 if ( ($action == "all_name") || ($action == "all_date"))
-	$title = "All Pages";
+	$title = __("All");
 
 else if ( $action == "upload" )
-	$title = "Upload Image";
+	$title = __("Upload");
 
 else if ( $action == "new" )
-	$title = "New";
+	$title = __("New");
 
 else if ( $action == "search" )
-	$title = "Search";
-
+	$title = __("Search");
 else
 {
 	$title = $page;
