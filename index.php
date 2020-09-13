@@ -166,7 +166,7 @@ function toHTML($inText)
 		$linkedpage = $matches[1][$i];
 		$linkedfilename = PAGES_PATH."/$linkedpage.".PAGES_EXT;
 		$exists = file_exists($linkedfilename);
-		$inText = preg_replace("/\[\[$linkedpage\]\]/", "<a ".
+		$inText = preg_replace("|\[\[".preg_quote($linkedpage)."\]\]|", "<a ".
 			($exists? "" : "class=\"noexist\"")
 			." href=\"" . SELF . VIEW . "/$linkedpage\">$linkedpage</a>", $inText);
 	}
