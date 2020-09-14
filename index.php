@@ -240,7 +240,19 @@ if ( $action == "edit" || $action == "new" )
 	{
 		if ($newPage != "")
 		{
-			$html .= "<p class=\"note\">". __('Creating new page since no page with given title exists!') ."</p>\n";
+			$html .= "<p class=\"note\">". __('Creating new page since no page with given title exists!') ;
+			// check if similar page exists...
+			$pageNames = getAllPageNames();
+			foreach($pageNames as $page)
+			{
+				if (levenshtein($newPage, $page) < 3)
+				{
+//	print "<a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>";
+
+					$html .= "<br/><strong>Note:</strong> Found similar page <a href=\"".SELF."/$page\">$page</a>. Maybe you meant to edit this instead?";
+				}
+			}
+			$html .= "</p>\n";
 		}
 		$html .= "<p>" . __('Title') . ": <input id=\"title\" type=\"text\ name=\"page\" value=\"$newPage\" /></p>\n";
 	}
