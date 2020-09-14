@@ -292,6 +292,7 @@ else if ( $action == "upload" )
 }
 else if ( $action == "uploaded" )
 {
+	$html = '';
 	if ( !DISABLE_UPLOADS )
 	{
 		$dstName = sanitizeFilename($_FILES['userfile']['name']);
