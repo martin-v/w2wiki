@@ -122,6 +122,21 @@ function descLengthSort($val_1, $val_2)
 }
 
 
+function getAllPageNames()
+{
+	$filenames = array();
+	$dir = opendir(PAGES_PATH);
+	while ( $filename = readdir($dir) )
+	{
+		if ( $filename[0] == "." || preg_match("/".PAGES_EXT."$/", $filename) != 1)
+		{
+			continue;
+		}
+		$filename = preg_replace("/(.*?)\.".PAGES_EXT."/", "\\1", $filename);
+		$filenames[] = $filename;
+	}
+	closedir($dir);
+	return $filenames;
 }
 
 
@@ -129,19 +144,8 @@ function toHTML($inText)
 {
 	if ( AUTOLINK_PAGE_TITLES )
 	{
-		$dir = opendir(PAGES_PATH);
-		while ( $filename = readdir($dir) )
-		{
-			if ( $filename{0} == '.' )
-			{
-				continue;
-			}
-			$filename = preg_replace("/(.*?)\.".PAGES_EXT."/", "\\1", $filename);
-			$filenames[] = $filename;
-		}
-		closedir($dir);
+		$filenames = getAllPageNames();
 		uasort($filenames, "descLengthSort");
-
 		foreach ( $filenames as $filename )
 		{
 			$inText = preg_replace("/(?<![\>\[\/])($filename)(?!\]\>)/im", "<a href=\"" . SELF . VIEW . "/$filename\">\\1</a>", $inText);
@@ -392,18 +396,7 @@ else if ( $action == "renamed" )
 */
 else if ( $action == "all_name" )
 {
-	$dir = opendir(PAGES_PATH);
-	$filelist = array();
-
-	while ( $file = readdir($dir) )
-	{
-		if ( $file[0] == "." || preg_match("/".PAGES_EXT."$/", $file) != 1)
-		{
-			continue;
-		}
-		array_push($filelist, $file);
-	}
-	closedir($dir);
+	$filelist = getAllPageNames();
 	natcasesort($filelist);
 	$html .= "<p>Total: ".count($filelist)." pages</p>";
 	$html .= "<table>";
