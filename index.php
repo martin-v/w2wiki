@@ -89,12 +89,10 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 
 // Support functions
 
-function printToolbar()
+function printToolbar($page)
 {
-	global $upage, $action;
-
 	print "<div class=\"toolbar\">";
-	print "<a class=\"first\" href=\"" . SELF . "?action=edit&amp;page=$upage\">". __('Edit') ."</a> ";
+	print "<a class=\"first\" href=\"" . SELF . "?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a> ";
 	print "<a href=\"" . SELF . "?action=new\">". __('New') ."</a> ";
 
 	if ( !DISABLE_UPLOADS )
@@ -165,7 +163,7 @@ function toHTML($inText)
 		$exists = file_exists($linkedfilename);
 		$inText = preg_replace("|\[\[".preg_quote($linkedpage)."\]\]|", "<a ".
 			($exists? "" : "class=\"noexist\"")
-			." href=\"" . SELF . VIEW . "/$linkedpage\">$linkedpage</a>", $inText);
+			." href=\"" . SELF . VIEW . "/".urlencode($linkedpage)."\">$linkedpage</a>", $inText);
 	}
 	$inText = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $inText);
 	$inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
@@ -205,9 +203,8 @@ if ($action === "view" || $action === "edit" || $action === "save")
 	// Otherwise, get page name from 'page' request variable.
 
 	$page = preg_match('@^/@', @$_SERVER["PATH_INFO"]) ?
-		substr($_SERVER["PATH_INFO"], 1) : @$_REQUEST['page'];
+		urldecode(substr($_SERVER["PATH_INFO"], 1)) : urldecode(@$_REQUEST['page']);
 	$page = sanitizeFilename($page);
-	$upage = urlencode($page);
 	if ( $page == "" )
 	{
 		$page = DEFAULT_PAGE;
@@ -249,7 +246,7 @@ if ( $action == "edit" || $action == "new" )
 				{
 //	print "<a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>";
 
-					$html .= "<br/><strong>Note:</strong> Found similar page <a href=\"".SELF."/$page\">$page</a>. Maybe you meant to edit this instead?";
+					$html .= "<br/><strong>Note:</strong> Found similar page <a href=\"".SELF."/".urlencode($page)."\">$page</a>. Maybe you meant to edit this instead?";
 				}
 			}
 			$html .= "</p>\n";
@@ -409,15 +406,17 @@ else if ( $action == "renamed" )
 */
 else if ( $action == "all_name" )
 {
-	$filelist = getAllPageNames();
-	natcasesort($filelist);
-	$html .= "<p>Total: ".count($filelist)." pages</p>";
+	$pageNames = getAllPageNames();
+	natcasesort($pageNames);
+	$html = "<p>Total: ".count($pageNames)." pages</p>";
 	$html .= "<table>";
-	foreach ($filelist as $file)
+	foreach ($pageNames as $page)
 	{
-		$afile = preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
-		$efile = preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"?action=edit&amp;page=\\1\">". __('Edit') ."</a>", urlencode($file));
-		$html .= "<tr><td>$afile</td><td width=\"20\"></td><td>$efile</td></tr>\n";
+		$html .= "<tr>".
+				"<td><a href=\"" . SELF . VIEW . "/".urlencode($page)."\">$page</a></td>".
+				"<td width=\"20\"></td>".
+				"<td><a href=\"?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a></td>".
+			"</tr>\n";
 	}
 	$html .= "</table>\n";
 }
@@ -523,7 +522,7 @@ print "</head>\n";
 print "<body>\n";
 print "<div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$datetime</span></div>\n";
 
-printToolbar();
+printToolbar($page);
 
 print "<div class=\"main\">\n";
 print "$html\n";
