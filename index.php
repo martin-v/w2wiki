@@ -132,7 +132,7 @@ function getAllPageNames()
 		{
 			continue;
 		}
-		$filename = preg_replace("/(.*?)\.".PAGES_EXT."/", "\\1", $filename);
+		$filename = substr($filename, 0, -(strlen(PAGES_EXT)+1) );
 		$filenames[] = $filename;
 	}
 	closedir($dir);
