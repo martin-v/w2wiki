@@ -52,10 +52,32 @@ if ( count($allowedIPs) > 0 )
 
 	if ( !$accepted )
 	{
-		print "<html><body>Access from IP address $ip is not allowed";
-		print "</body></html>";
+		print "<html><body>Access from IP address $ip is not allowed</body></html>";
 		exit;
 	}
+}
+
+
+function printHeader($title, $bodyclass="")
+{
+	print "<!doctype html>\n";
+	print "<html lang=\"" . W2_LOCALE . "\">\n";
+	print "  <head>\n";
+	print "    <meta charset=\"" . W2_CHARSET . "\">\n";
+	print "    <link rel=\"apple-touch-icon\" href=\"w2-icon.png\"/>\n";
+	print "    <link rel=\"icon\" href=\"w2-icon.png\"/>\n";
+	//print "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=false\" />\n";
+	print "    <link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
+	print "    <title>$title</title>\n";
+	print "  </head>\n";
+	print "  <body".($bodyclass != "" ? " class=\"$bodyclass\"":"").">\n";
+}
+
+
+function printFooter()
+{
+	print "  </body>\n";
+	print "</html>";
 }
 
 if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
@@ -67,22 +89,13 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 		$_SESSION['password'] = W2_PASSWORD_HASH;
 	else
 	{
-		print "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
-		print '<html lang="' . W2_LOCALE . '">' . "\n";
-		print "<head>\n";
-		print '<meta charset="' . W2_CHARSET . '">' . "\n";
-		print "<link rel=\"apple-touch-icon\" href=\"w2-icon.png\"/>";
-		print "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=false\" />\n";
-
-		print "<link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
-
-		print "<title>" . __('Log In') . "</title>\n";
-		print "</head>\n";
-		print "<h1>" . __('Log In') . "</h1>";
-		print "<body class=\"login\"><form method=\"post\">";
-		print __('Password') . ": <input type=\"password\" name=\"p\">\n";
-		print "<input type=\"submit\" value=\"" . __('Log In') . "\"></form>";
-		print "</body></html>";
+		printHeader( __('Log In'), "login");
+		print "    <h1>" . __('Log In') . "</h1>\n";
+		print "    <form method=\"post\">\n";
+		print "      ".__('Password') . ": <input type=\"password\" name=\"p\">\n";
+		print "      <input type=\"submit\" value=\"" . __('Log In') . "\">\n";
+		print "    </form>\n";
+		printFooter();
 		exit;
 	}
 }
@@ -91,23 +104,23 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 
 function printToolbar($page)
 {
-	print "<div class=\"toolbar\">";
-	print "<a class=\"first\" href=\"" . SELF . "?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a> ";
-	print "<a href=\"" . SELF . "?action=new\">". __('New') ."</a> ";
-
+	print "    <div class=\"toolbar\">\n";
+	print "      <a class=\"first\" href=\"" . SELF . "?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a>\n";
+	print "      <a href=\"" . SELF . "?action=new\">". __('New') ."</a>\n";
 	if ( !DISABLE_UPLOADS )
-		print "<a href=\"" . SELF . VIEW . "?action=upload\">". __('Upload') ."</a>";
-
-	print "<a href=\"" . SELF . "?action=all_name\">". __('All') ."</a> ";
-	print "<a href=\"" . SELF . "?action=all_date\">". __('Recent') ."</a> ";
-	print "<a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>";
-
+	{
+		print "      <a href=\"" . SELF . VIEW . "?action=upload\">". __('Upload') ."</a>\n";
+	}
+	print "      <a href=\"" . SELF . "?action=all_name\">". __('All') ."</a>\n";
+	print "      <a href=\"" . SELF . "?action=all_date\">". __('Recent') ."</a>\n";
+	print "      <a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>\n";
 	if ( REQUIRE_PASSWORD )
-		print "<a href=\"" . SELF . "?action=logout\">". __('Log out') . "</a>";
-
-	print "<form method=\"post\" action=\"" . SELF . "?action=search\">\n";
-	print "<input class=\"search\" placeholder=\"". __('Search') ."\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" /></form>\n";
-	print "</div>\n";
+	{
+		print "      <a href=\"" . SELF . "?action=logout\">". __('Log out') . "</a>";
+	}
+	print "      <form method=\"post\" action=\"" . SELF . "?action=search\">\n";
+	print "        <input class=\"search\" placeholder=\"". __('Search') ."\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" />\n      </form>\n";
+	print "    </div>\n";
 }
 
 
@@ -448,7 +461,8 @@ else if ( $action == "search" )
 {
 	$matches = 0;
 	$q = $_REQUEST['q'];
-	$html = "<h1>Search: $q</h1>\n<ul>\n";
+	$html = "    <h1>Search: $q</h1>\n".
+		"    <ul>\n";
 
 	if ( trim($q) != "" )
 	{
@@ -472,8 +486,8 @@ else if ( $action == "search" )
 		closedir($dir);
 	}
 
-	$html .= "</ul>\n";
-	$html .= "<p>$matches matched</p>\n";
+	$html .= "    </ul>\n";
+	$html .= "    <p>$matches matched</p>\n";
 }
 else
 {
@@ -508,27 +522,10 @@ else
 
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
-
-print "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
-print '<html lang="' . W2_LOCALE . '">' . "\n";
-print "<head>\n";
-print '<meta charset="' . W2_CHARSET . '">' . "\n";
-print "<link rel=\"apple-touch-icon\" href=\"w2-icon.png\"/>";
-print "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=false\" />\n";
-
-print "<link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
-print "<title>" . __( $title ) . "</title>\n";
-print "</head>\n";
-print "<body>\n";
-print "<div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$datetime</span></div>\n";
-
+printHeader($title);
+print "    <div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$datetime</span></div>\n";
 printToolbar($page);
-
-print "<div class=\"main\">\n";
+print "    <div class=\"main\">\n\n";
 print "$html\n";
-print "</div>\n";
-
-print "</body>\n";
-print "</html>\n";
-
-?>
+print "    </div>\n";
+printFooter();
