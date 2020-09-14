@@ -91,7 +91,7 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 
 function printToolbar()
 {
-	global $upage, $page, $action;
+	global $upage, $action;
 
 	print "<div class=\"toolbar\">";
 	print "<a class=\"first\" href=\"" . SELF . "?action=edit&amp;page=$upage\">". __('Edit') ."</a> ";
@@ -115,25 +115,18 @@ function printToolbar()
 
 function descLengthSort($val_1, $val_2)
 {
-	$retVal = 0;
-
 	$firstVal = strlen($val_1);
 	$secondVal = strlen($val_2);
+	return ( $firstVal > $secondVal ) ?
+		-1 : ( ( $firstVal < $secondVal ) ? 1 : 0);
+}
 
-	if ( $firstVal > $secondVal )
-		$retVal = -1;
 
-	else if ( $firstVal < $secondVal )
-		$retVal = 1;
-
-	return $retVal;
 }
 
 
 function toHTML($inText)
 {
-	global $page;
-
 	if ( AUTOLINK_PAGE_TITLES )
 	{
 		$dir = opendir(PAGES_PATH);
