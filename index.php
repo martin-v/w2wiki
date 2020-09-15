@@ -326,46 +326,45 @@ else if ( $action == "upload" )
 }
 else if ( $action == "uploaded" )
 {
-	$html = '';
-	if ( !DISABLE_UPLOADS )
+	if ( DISABLE_UPLOADS )
 	{
-		$dstName = sanitizeFilename($_FILES['userfile']['name']);
-		$fileType = $_FILES['userfile']['type'];
-		preg_match('/\.([^.]+)$/', $dstName, $matches);
-		$fileExt = isset($matches[1]) ? $matches[1] : null;
-
-		if (in_array($fileType, explode(',', VALID_UPLOAD_TYPES)) &&
-			in_array($fileExt, explode(',', VALID_UPLOAD_EXTS)))
-		{
-			$errLevel = error_reporting(0);
-
-			$path = BASE_PATH . "/images/$dstName";
-			if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true )
-			{
-				$html = "<p class=\"note\">File '$dstName' uploaded</p>\n";
-			}
-			else
-			{
-				$error_code = $_FILES['userfile']['error'];
-				if ( $error_code === 0 ) {
-					// Likely a permissions issue
-					$html = "<p class=\"note\">". __('Upload error') .": can't write to ".$path."<br/><br/>\n".
-						"Check that your permissions are set correctly.</p>\n";
-				} else {
-					// Give generic error message
-					$html = "<p class=\"note\">Upload error, error #".$error_code."<br/><br/>\n".
-						"Please see <a href=\"https://www.php.net/manual/en/features.file-upload.errors.php\">here</a> for more information.<br/><br/>\n".
-						"If you see this message, please file a bug to improve w2wiki.</p>";
-				}
-			}
-
-			error_reporting($errLevel);
-		} else {
-			$html = '<p class="note">' . __('Upload error: invalid file type') . '</p>' . "\n";
-		}
+		die('Invalid access. Uploads are disabled in the configuration.');
 	}
+	$dstName = sanitizeFilename($_FILES['userfile']['name']);
+	$fileType = $_FILES['userfile']['type'];
+	preg_match('/\.([^.]+)$/', $dstName, $matches);
+	$fileExt = isset($matches[1]) ? $matches[1] : null;
 
-	$html .= toHTML($text);
+	$html = "<div class=\"note\">";
+	if (in_array($fileType, explode(',', VALID_UPLOAD_TYPES)) &&
+		in_array($fileExt, explode(',', VALID_UPLOAD_EXTS)))
+	{
+		$errLevel = error_reporting(0);
+		$path = BASE_PATH . "/images/$dstName";
+		if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true )
+		{
+			$html .= "File '$dstName' uploaded";
+		}
+		else
+		{
+			$error_code = $_FILES['userfile']['error'];
+			if ( $error_code === 0 ) {
+				// Likely a permissions issue
+				$html = __('Upload error') .": can't write to ".$path."<br/><br/>\n".
+					"Check that your permissions are set correctly.";
+			} else {
+				// Give generic error message
+				$html = "Upload error, error #".$error_code."<br/><br/>\n".
+					"Please see <a href=\"https://www.php.net/manual/en/features.file-upload.errors.php\">here</a> for more information.<br/><br/>\n".
+					"If you see this message, please <a href=\"https://github.com/codeling/w2wiki/issues\">file a bug to improve w2wiki</a>";
+			}
+		}
+
+		error_reporting($errLevel);
+	} else {
+		$html .= __('Upload error: invalid file type');
+	}
+	$html .= "</div>\n";
 }
 else if ( $action == "save" )
 {
