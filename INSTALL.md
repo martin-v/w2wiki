@@ -40,6 +40,16 @@ define('EDIT_ROWS', 18);
 
 ## Security
 
+**Note:** In it's current state, W2 wiki is not intended to be run as a public
+wiki in places where malicious actors can access it. It is neither extensively
+tested, nor is it security-hardened, and might therefore compromise the
+security of your server. We therefore recommend to only make it available in
+a small local network where each user is known, or via HTTPS and behind a
+Basic Authentication configured via your webserver. The latter even allows for
+multiple different users, i.e. a more fine-grained access control than what
+W2 wiki itself currently provides. The features described below might be
+removed in the near future in this fork!
+
 W2 has the ability to prompt for a password before allowing access to the
 site.  Two lines in config.php control this:
 ```
@@ -51,9 +61,7 @@ Set `REQUIRE_PASSWORD` to true and set `W2_PASSWORD` to the password you'd like
 to use.
 **Note:** This is a very rudimentary way of authorizing access. A slightly more
 secure variant is to leave `W2_PASSWORD` empty, and use the `W2_PASSWORD_HASH`
-setting instead. Even better (and allowing for multiple different users) would
-be the option to use Basic Authentication configured via your webserver
-configuration.
+setting instead.
 
 ## Git Integration
 
