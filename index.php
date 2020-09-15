@@ -232,7 +232,7 @@ function destroy_session()
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'view';
 $newPage = "";
 $text = "";
-if ($action === "view" || $action === "edit" || $action === "save")
+if ($action === "view" || $action === "edit" || $action === "save" || $action === "rename")
 {
 	// Look for page name following the script name in the URL, like this:
 	// http://stevenf.com/w2demo/index.php/Markdown%20Syntax
@@ -388,47 +388,55 @@ else if ( $action == "save" )
 	}
 	$html .= toHTML($newText);
 }
-/*
 else if ( $action == "rename" )
 {
 	$html = "<form id=\"rename\" method=\"post\" action=\"" . SELF . "\">";
-	$html .= "<p>Title: <input id=\"title\" type=\"text\" name=\"page\" value=\"" . htmlspecialchars($page) . "\" />";
-	$html .= "<input id=\"rename\" type=\"submit\" value=\"Rename\">";
+	$html .= "<p>".__('Rename')." $page ".__('to')." <input id=\"newPageName\" type=\"text\" name=\"newPageName\" value=\"" . htmlspecialchars($page) . "\" class=\"pagename\" /></p>";
+	$html .= "<p><input id=\"rename\" type=\"submit\" value=\"".__('Rename')."\">";
 	$html .= "<input id=\"cancel\" type=\"button\" onclick=\"history.go(-1);\" value=\"Cancel\" />\n";
 	$html .= "<input type=\"hidden\" name=\"action\" value=\"renamed\" />";
-	$html .= "<input type=\"hidden\" name=\"prevpage\" value=\"" . htmlspecialchars($page) . "\" />";
+	$html .= "<input type=\"hidden\" name=\"oldPageName\" value=\"" . htmlspecialchars($page) . "\" />";
 	$html .= "</p></form>";
 }
 else if ( $action == "renamed" )
 {
-	$pp = $_REQUEST['prevpage'];
-	$pg = $_REQUEST['page'];
-
-	$prevpage = sanitizeFilename($pp);
-	$prevpage = urlencode($prevpage);
-
-	$prevfilename = PAGES_PATH . "/$prevpage.md";
-
-	if ( rename($prevfilename, $filename) )
+	$oldPageName = sanitizeFilename($_REQUEST['oldPageName']);
+	$newPageName = sanitizeFilename($_REQUEST['newPageName']);
+	$html = "<div class=\"note\">";
+	if ( rename(fileNameForPage($oldPageName), fileNameForPage($newPageName)) )
 	{
-		// Success.  Change links in all pages to point to new page
-		if ( $dh = opendir(PAGES_PATH) )
+		$html .= "Renamed $oldPageName to $newPageName.";
+		// Change links in all pages to point to new page
+		$pagenames = getAllPageNames();
+		$changedPages = array();
+		foreach ($pagenames as $replacePage)
 		{
-			while ( ($file = readdir($dh)) !== false )
+			$content = file_get_contents(fileNameForPage($replacePage));
+			$count = 0;
+			$newContent = str_replace("[[$oldPageName]]", "[[$newPageName]]", $content, $count);
+			if ($count > 0) // if something changed
 			{
-				$content = file_get_contents($file);
-				$pattern = "/\[\[" . $pp . "\]\]/g";
-				preg_replace($pattern, "[[$pg]]", $content);
-				file_put_contents($file, $content);
+				$changedPages[] = $replacePage." ($count ".__('matches').")";
+				file_put_contents(fileNameForPage($replacePage), $newContent);
 			}
 		}
+		if (count($changedPages) > 0)
+		{
+			$html .= "<br/>\n".__('Updated links in the following pages:')."\n<ul><li>";
+			$html .= implode("</li><li>", $changedPages);
+			$html .= "</li></ul>";
+		}
+		$commitmsg = escapeshellarg("Rename $oldPageName to $newPageName");
+		gitChangeHandler($commitmsg, $html);
+		$page = $newPageName;
 	}
 	else
 	{
-		$html = "<p class=\"note\">Error renaming file</p>\n";
+		$html .= __('Error renaming file');
+		$page = $oldPageName;
 	}
+	$html .= "</div>\n";
 }
-*/
 else if ( $action == "all_name" )
 {
 	$pageNames = getAllPageNames();
@@ -538,6 +546,10 @@ print "    <div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$
 if ($action === 'view')
 {
 	print "      <a href=\"" . SELF . "?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a>\n";
+}
+if ($action === 'view' || $action === 'edit')
+{
+	print "      <a href=\"" . SELF . "?action=rename&amp;page=".urlencode($page)."\">". __('Rename') ."</a>\n";
 }
 print "    </div>\n";
 print "    <div class=\"toolbar\">\n";

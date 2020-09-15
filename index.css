@@ -211,6 +211,10 @@ input.search:focus {
 	width: 15em;
 }
 
+input.pagename {
+	width: 20em;
+}
+
 input[type="button"],
 input[type="submit"] {
 	border:none;
