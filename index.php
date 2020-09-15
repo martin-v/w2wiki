@@ -142,6 +142,11 @@ function getAllPageNames()
 	return $filenames;
 }
 
+function fileNameForPage($page)
+{
+	return PAGES_PATH . "/$page." . PAGES_EXT;
+}
+
 function toHTML($inText)
 {
 	if ( AUTOLINK_PAGE_TITLES )
@@ -163,7 +168,7 @@ function toHTML($inText)
 	for ($i = 0; $i < count($matches[0]); $i++)
 	{
 		$linkedpage = $matches[1][$i];
-		$linkedfilename = PAGES_PATH."/$linkedpage.".PAGES_EXT;
+		$linkedfilename = fileNameForPage($linkedpage);
 		$exists = file_exists($linkedfilename);
 		$inText = preg_replace("|\[\[".preg_quote($linkedpage)."\]\]|", "<a ".
 			($exists? "" : "class=\"noexist\"")
@@ -221,7 +226,7 @@ if ($action === "view" || $action === "edit" || $action === "save")
 	{
 		$page = DEFAULT_PAGE;
 	}
-	$filename = PAGES_PATH . "/$page.".PAGES_EXT;
+	$filename = fileNameForPage($page);
 }
 if ($action === "view" || $action === "edit")
 {
@@ -476,20 +481,14 @@ else if ( $action == "search" )
 
 	if ( trim($q) != "" )
 	{
-		$dir = opendir(PAGES_PATH);
-
-		while ( $file = readdir($dir) )
+		$pagenames = getAllPageNames();
+		foreach($pagenames as $searchPage)
 		{
-			if ( $file[0] == "." )
-				continue;
-
-			$text = file_get_contents(PAGES_PATH . "/$file");
-
-                        if ( preg_match("/{$q}/i", $text) || preg_match("/{$q}/i", $file) )
+			$text = file_get_contents(fileNameForPage($searchPage));
+			if ( preg_match("/{$q}/i", $text) || preg_match("/{$q}/i", $searchPage) )
 			{
 				++$matches;
-				$file = preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
-				$html .= "<li>$file</li>\n";
+				$html .= "<li><a href=\"".SELF.VIEW."/$searchPage\">$searchPage</a></li>\n";
 			}
 		}
 
