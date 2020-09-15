@@ -298,7 +298,8 @@ if ( $action == "edit" || $action == "new" )
 		$html .= "<p>Message: <input type=\"text\" id=\"gitmsg\" name=\"gitmsg\" /></p>\n";
 	}
 
-	$html .= "<p><input type=\"hidden\" name=\"action\" value=\"save\" />";
+	$html .= "<p><input type=\"hidden\" name=\"action\" value=\"save\" />\n";
+	$html .= "<input type=\"hidden\" name=\"isNew\" value=\"".(($action==="new")?"true":"")."\" />\n";
 	$html .= '<input id="save" type="submit" value="'. __('Save') .'" />'."\n";
 	$html .= '<input id="cancel" type="button" onclick="history.go(-1);" value="'. __('Cancel') .'" />'."\n";
 	$html .= "</p></form>\n";
@@ -370,7 +371,7 @@ else if ( $action == "uploaded" )
 else if ( $action == "save" )
 {
 	$newText = $_REQUEST['newText'];
-
+	$isNew = $_REQUEST['isNew'];
 	$errLevel = error_reporting(0);
 	$success = file_put_contents($filename, $newText);
 	error_reporting($errLevel);
@@ -381,9 +382,9 @@ else if ( $action == "save" )
 	}
 	else
 	{
-		$html = "<div class=\"note\">" . __('Saved');
+		$html = "<div class=\"note\">" . ($isNew ? __('Created'): __('Saved'));
 		$usermsg = $_REQUEST['gitmsg'];
-		$commitmsg = escapeshellarg($page . ($usermsg !== '' ?  (": ".$usermsg) : " changed"));
+		$commitmsg = escapeshellarg($page . ($usermsg !== '' ?  (": ".$usermsg) : ($isNew ? " created" : " changed")));
 		gitChangeHandler($commitmsg, $html);
 		$html .=  "</div>\n";
 	}
