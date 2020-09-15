@@ -254,7 +254,7 @@ if ( $action == "edit" || $action == "new" )
 	{
 		if ($newPage != "")
 		{
-			$html .= "<p class=\"note\">". __('Creating new page since no page with given title exists!') ;
+			$html .= "<div class=\"note\">". __('Creating new page since no page with given title exists!') ;
 			// check if similar page exists...
 			$pageNames = getAllPageNames();
 			foreach($pageNames as $page)
@@ -266,9 +266,9 @@ if ( $action == "edit" || $action == "new" )
 					$html .= "<br/><strong>Note:</strong> Found similar page <a href=\"".SELF."/".urlencode($page)."\">$page</a>. Maybe you meant to edit this instead?";
 				}
 			}
-			$html .= "</p>\n";
+			$html .= "</div>\n";
 		}
-		$html .= "<p>" . __('Title') . ": <input id=\"title\" type=\"text\ name=\"page\" value=\"$newPage\" /></p>\n";
+		$html .= "<p>" . __('Title') . ": <input id=\"title\" type=\"text\" name=\"page\" value=\"$newPage\" class=\"pagename\" /></p>\n";
 	}
 
 	$html .= "<p><textarea id=\"text\" name=\"newText\" rows=\"" . EDIT_ROWS . "\">$text</textarea></p>\n";
@@ -357,7 +357,7 @@ else if ( $action == "save" )
 
 	if ( $success === FALSE)
 	{
-		$html = "<p class=\"note\">Error saving changes! Make sure your web server has write access to " . PAGES_PATH . "</p>\n";
+		$html = "<div class=\"note\">Error saving changes! Make sure your web server has write access to " . PAGES_PATH . "</div>\n";
 	}
 	else
 	{
@@ -436,7 +436,7 @@ else if ( $action == "all_name" )
 {
 	$pageNames = getAllPageNames();
 	natcasesort($pageNames);
-	$html = "<p>Total: ".count($pageNames)." pages</p>";
+	$html = "<p>".__('Total').": ".count($pageNames)." pages</p>";
 	$html .= "<table>";
 	foreach ($pageNames as $page)
 	{
