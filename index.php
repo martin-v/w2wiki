@@ -516,16 +516,21 @@ else
 $datetime = '';
 
 if ( ($action == "all_name") || ($action == "all_date"))
+{
 	$title = __("All");
-
+}
 else if ( $action == "upload" )
+{
 	$title = __("Upload");
-
+}
 else if ( $action == "new" )
+{
 	$title = __("New");
-
+}
 else if ( $action == "search" )
+{
 	$title = __("Search");
+}
 else
 {
 	$title = $page;
