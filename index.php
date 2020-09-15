@@ -156,6 +156,7 @@ function checkedExecute(&$html, $cmd)
 	{
 		$html .= "<br/>Error executing command ".$cmd." (return value: ".$returnValue."): ".implode(" ", $output);
 	}
+	return ($returnValue == 0);
 }
 
 function gitChangeHandler($commitmsg, $html)
