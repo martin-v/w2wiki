@@ -1,30 +1,53 @@
-w2wiki
-======
+# W2 wiki
 
-[![Build Status](https://travis-ci.com/nickodell/w2wiki.svg?branch=master)](https://travis-ci.com/nickodell/w2wiki)
+W2 wiki is a web-based, wiki-like notepad that you can host yourself.
 
-### W2 by Steven Frank
 
-#### A web-based, wiki-like notepad that you host yourself.
+## Notable features:
 
-Notable features:
-
-- Written in PHP for portability and hackability
-- Uses Markdown syntax for formatting notes
-- Fits to screen nicely when viewed on iPhone, with custom icon for adding to home screen
-- Use double-brackets [[like this]] to link to another note by title
+- Elegant text markup:
+    - Uses [Markdown Syntax](https://github.com/codeling/w2wiki/blob/master/pages/Markdown Syntax.md); additionally,
+    - It supports double-brackets [[like this]] to link to another page in the wiki by title
+    - It supports double-braces {{like this}} to link to an uploaded image
+- Minimalistic but functional interface:
+    - Fits to screen nicely when viewed on iPhone, with custom icon for adding to home screen
+    - HTML5 compliant output
 - Title & content search
-- Filesystem storage (no database)
-- Plaintext storage
-- Image attachment uploading
-- Public or password-protected
+- Filesystem storage (no database required) in plain Markdown text files.
+- Rudimentary git integration to commit & push each page edit
+- Localization support (currently en/ja translations available)
+- Image uploading support
+- Optionally password-protected
 - Unlike cloud / hosted solutions, you retain control of your data
+- Written in PHP for portability and hackability
+- Extremely compact (only a few .php files and a .css file)
 
-#### Demo
 
-[See a sample W2 installation](http://stevenf.com/w2demo/)
+## Installation & Configuration
 
-#### Forum
+See [Installation instructions](https://github.com/codeling/w2wiki/blob/master/INSTALL.md).
 
-http://groups.google.com/group/w2wiki
+
+## License
+
+W2 is licensed under the [MIT license](https://github.com/codeling/w2wiki/blob/master/LICENSE).
+
+
+## Acknowledgements
+
+Originally written by [Steven Frank](https://github.com/panicsteve/w2wiki) and others, with modifications by
+- [44uk](https://github.com/44uk/w2wiki)
+- [knee-cola](https://github.com/knee-cola/w2wiki)
+- [namvan](https://github.com/namvan/w2wiki)
+- [nickodell](https://github.com/nickodell/w2wiki)
+- [pilem](https://github.com/pilem/w2)
+
+Uses [PHP Markdown](https://github.com/michelf/php-markdown) by Michel Fortin for rendering Markdown to HTML.
+
+Maintainer of this fork is [codeling](https://github.com/codeling/w2wiki).
+
+
+## Reporting Bugs
+
+Please report bugs in [the github issue tracker](https://github.com/codeling/w2wiki/issues) of this fork.
 
