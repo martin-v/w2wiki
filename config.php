@@ -1,4 +1,4 @@
-<?php if (!defined("W2APP")){ die('No direct access.'); }
+<?php if (!defined('W2APP')){ die('No direct access.'); }
 /*
  * W2
  *

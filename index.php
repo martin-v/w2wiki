@@ -1,5 +1,5 @@
 <?php
-define(W2APP, true);
+define('W2APP', true);
 /*
  * W2
  *
