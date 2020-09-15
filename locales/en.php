@@ -1,5 +1,4 @@
-<?php if( ! defined( "BASE_PATH" ) ){ echo 'Not allow to execute directly.'; exit(); }
-/* vi: set noet ft=php ff=unix ts=2 sw=1 fenc=utf8 */
+<?php if (!defined("W2APP")){ die('No direct access.'); }
 
 /**
  * Locale set

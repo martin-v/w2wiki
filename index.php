@@ -1,5 +1,5 @@
 <?php
-
+define(W2APP, true);
 /*
  * W2
  *
@@ -26,9 +26,25 @@ use Michelf\MarkdownExtra;
 
 include_once "config.php";
 
-// Load localize functions
+// Load configured localization:
+require_once 'locales/' . W2_LOCALE . '.php';
 
-include_once "locale.php";
+/**
+ * Get translated word
+ *
+ * String	$label		Key for locale word
+ * String	$alt_word	Alternative word
+ * return	String
+ */
+function __( $label, $alt_word = null )
+{
+	global $w2_word_set;
+	if( empty($w2_word_set[$label]) )
+	{
+		return is_null($alt_word) ? $label : $alt_word;
+	}
+	return htmlspecialchars($w2_word_set[$label], ENT_QUOTES);
+}
 
 ini_set('session.gc_maxlifetime', W2_SESSION_LIFETIME);
 
