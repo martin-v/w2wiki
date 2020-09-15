@@ -175,10 +175,16 @@ define('W2_SESSION_NAME', 'W2');
 // Git Integration
 // -----------------------------
 
-// GIT_UPLOAD
+// GIT_COMMIT_ENABLED
 //
-// Enable/Disable pushing changes in page folder to git repository
+// Enable/Disable committing changes in page folder to local git repository
+define('GIT_COMMIT_ENABLED', false);
+
+// GIT_PUSH_ENABLED
+//
+// Enable/Disable pushing changes in page folder to a remote git repository
 define('GIT_PUSH_ENABLED', false);
+
 
 // -----------------------------
 // Locale and encoding settings

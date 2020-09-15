@@ -203,6 +203,14 @@ function destroy_session()
 	unset($_SESSION);
 }
 
+function checkedExecute(&$html, $cmd, $returnValue, $output)
+{
+	if ($returnValue != 0)
+	{
+		$html .= "<br/>Error executing command ".$cmd." (return value: ".$returnValue."): ".implode(" ", $output);
+	}
+}
+
 // Main code
 
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'view';
@@ -354,17 +362,29 @@ else if ( $action == "save" )
 	if ( $success )
 	{
 		$html = "<p class=\"note\">" . __('Saved');
-		if (GIT_PUSH_ENABLED)
+		if (GIT_COMMIT_ENABLED)
 		{
 			$usermsg = $_REQUEST['gitmsg'];
 			$commitmsg = escapeshellarg($page . ($usermsg !== '' ?  (": ".$usermsg) : " changed"));
 			$returnValue = 0;
 			$output = '';
-			$cmd = "cd ".PAGES_PATH." && git add -A && git commit -m ".$commitmsg." && git push";
+			$cmd = "cd ".PAGES_PATH." && git add -A && git commit -m ".$commitmsg;
 			exec($cmd, $output, $returnValue);
-			if ($returnValue != 0)
+			if (checkedExecute($html, $cmd, $returnValue, $output))
 			{
-				$html .= "<br/>Error in git command ".$cmd." (return value: ".$returnValue."): ".implode(" ", $output);
+				if (GIT_PUSH_ENABLED)
+				{
+					$cmd = "cd ".PAGES_PATH." && git push";
+					checkedExecute($html, $cmd, $returnValue, $output);
+				}
+			}
+			else if (GIT_PUSH_ENABLED)
+			{
+				if ($returnValue != 0)
+				{
+					$html .= "<br/>Error in git command ".$cmd." (return value: ".$returnValue."): ".implode(" ", $output);
+				}
+
 			}
 		}
 		$html .=  "</p>\n";
