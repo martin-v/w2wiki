@@ -147,6 +147,33 @@ function fileNameForPage($page)
 	return PAGES_PATH . "/$page." . PAGES_EXT;
 }
 
+function checkedExecute(&$html, $cmd)
+{
+	$returnValue = 0;
+	$output = '';
+	exec($cmd, $output, $returnValue);
+	if ($returnValue != 0)
+	{
+		$html .= "<br/>Error executing command ".$cmd." (return value: ".$returnValue."): ".implode(" ", $output);
+	}
+}
+
+function gitChangeHandler($commitmsg, $html)
+{
+	if (!GIT_COMMIT_ENABLED)
+	{
+		return;
+	}
+	if (checkedExecute($html, "cd ".PAGES_PATH." && git add -A && git commit -m ".$commitmsg))
+	{
+		if (!GIT_PUSH_ENABLED)
+		{
+			return;
+		}
+		checkedExecute($html, "cd ".PAGES_PATH." && git push");
+	}
+}
+
 function toHTML($inText)
 {
 	if ( AUTOLINK_PAGE_TITLES )
@@ -199,13 +226,6 @@ function destroy_session()
 	unset($_SESSION);
 }
 
-function checkedExecute(&$html, $cmd, $returnValue, $output)
-{
-	if ($returnValue != 0)
-	{
-		$html .= "<br/>Error executing command ".$cmd." (return value: ".$returnValue."): ".implode(" ", $output);
-	}
-}
 
 // Main code
 
@@ -272,7 +292,7 @@ if ( $action == "edit" || $action == "new" )
 	}
 
 	$html .= "<p><textarea id=\"text\" name=\"newText\" rows=\"" . EDIT_ROWS . "\">$text</textarea></p>\n";
-	if (GIT_PUSH_ENABLED)
+	if (GIT_COMMIT_ENABLED)
 	{
 		$html .= "<p>Message: <input type=\"text\" id=\"gitmsg\" name=\"gitmsg\" /></p>\n";
 	}
@@ -361,33 +381,11 @@ else if ( $action == "save" )
 	}
 	else
 	{
-		$html = "<p class=\"note\">" . __('Saved');
-		if (GIT_COMMIT_ENABLED)
-		{
-			$usermsg = $_REQUEST['gitmsg'];
-			$commitmsg = escapeshellarg($page . ($usermsg !== '' ?  (": ".$usermsg) : " changed"));
-			$returnValue = 0;
-			$output = '';
-			$cmd = "cd ".PAGES_PATH." && git add -A && git commit -m ".$commitmsg;
-			exec($cmd, $output, $returnValue);
-			if (checkedExecute($html, $cmd, $returnValue, $output))
-			{
-				if (GIT_PUSH_ENABLED)
-				{
-					$cmd = "cd ".PAGES_PATH." && git push";
-					checkedExecute($html, $cmd, $returnValue, $output);
-				}
-			}
-			else if (GIT_PUSH_ENABLED)
-			{
-				if ($returnValue != 0)
-				{
-					$html .= "<br/>Error in git command ".$cmd." (return value: ".$returnValue."): ".implode(" ", $output);
-				}
-
-			}
-		}
-		$html .=  "</p>\n";
+		$html = "<div class=\"note\">" . __('Saved');
+		$usermsg = $_REQUEST['gitmsg'];
+		$commitmsg = escapeshellarg($page . ($usermsg !== '' ?  (": ".$usermsg) : " changed"));
+		gitChangeHandler($commitmsg, $html);
+		$html .=  "</div>\n";
 	}
 	$html .= toHTML($newText);
 }
