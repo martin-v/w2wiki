@@ -233,7 +233,7 @@ function destroy_session()
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'view';
 $newPage = "";
 $text = "";
-if ($action === "view" || $action === "edit" || $action === "save" || $action === "rename")
+if ($action === "view" || $action === "edit" || $action === "save" || $action === "rename" || $action === "delete")
 {
 	// Look for page name following the script name in the URL, like this:
 	// http://stevenf.com/w2demo/index.php/Markdown%20Syntax
@@ -389,24 +389,36 @@ else if ( $action == "save" )
 	}
 	$html .= toHTML($newText);
 }
-else if ( $action == "rename" )
+else if ( $action === "rename" || $action === "delete")
 {
-	$html = "<form id=\"rename\" method=\"post\" action=\"" . SELF . "\">";
-	$html .= "<p>".__('Rename')." $page ".__('to')." <input id=\"newPageName\" type=\"text\" name=\"newPageName\" value=\"" . htmlspecialchars($page) . "\" class=\"pagename\" /></p>";
-	$html .= "<p><input id=\"rename\" type=\"submit\" value=\"".__('Rename')."\">";
+	$actionName = ($action === "delete")?__('Delete'):__('Rename');
+	$html = "<form id=\"$action\" method=\"post\" action=\"" . SELF . "\">";
+	$html .= "<p>".$actionName." $page ".
+		(($action==="rename")? (__('to')." <input id=\"newPageName\" type=\"text\" name=\"newPageName\" value=\"" . htmlspecialchars($page) . "\" class=\"pagename\" />") : "?") . "</p>";
+	$html .= "<p><input id=\"$action\" type=\"submit\" value=\"$actionName\">";
 	$html .= "<input id=\"cancel\" type=\"button\" onclick=\"history.go(-1);\" value=\"Cancel\" />\n";
-	$html .= "<input type=\"hidden\" name=\"action\" value=\"renamed\" />";
+	$html .= "<input type=\"hidden\" name=\"action\" value=\"${action}d\" />";
 	$html .= "<input type=\"hidden\" name=\"oldPageName\" value=\"" . htmlspecialchars($page) . "\" />";
 	$html .= "</p></form>";
 }
-else if ( $action == "renamed" )
+else if ( $action === "renamed" || $action === "deleted")
 {
 	$oldPageName = sanitizeFilename($_REQUEST['oldPageName']);
-	$newPageName = sanitizeFilename($_REQUEST['newPageName']);
+	$newPageName = ($action === "deleted") ? "": sanitizeFilename($_REQUEST['newPageName']);
 	$html = "<div class=\"note\">";
-	if ( rename(fileNameForPage($oldPageName), fileNameForPage($newPageName)) )
+	if ($action === "deleted")
 	{
-		$html .= "Renamed $oldPageName to $newPageName.";
+		$success = unlink(fileNameForPage($oldPageName));
+	}
+	else
+	{
+		$success = rename(fileNameForPage($oldPageName), fileNameForPage($newPageName));
+	}
+	if ($success)
+	{
+		$message = ($action === "deleted") ? "Removed $oldPageName." :
+			"Renamed $oldPageName to $newPageName.";
+		$html .= $message;
 		// Change links in all pages to point to new page
 		$pagenames = getAllPageNames();
 		$changedPages = array();
@@ -427,13 +439,13 @@ else if ( $action == "renamed" )
 			$html .= implode("</li><li>", $changedPages);
 			$html .= "</li></ul>";
 		}
-		$commitmsg = escapeshellarg("Rename $oldPageName to $newPageName");
+		$commitmsg = escapeshellarg($message);
 		gitChangeHandler($commitmsg, $html);
 		$page = $newPageName;
 	}
 	else
 	{
-		$html .= __('Error renaming file');
+		$html .= ($action === "deleted") ? __('Error deleting file'): __('Error renaming file');
 		$page = $oldPageName;
 	}
 	$html .= "</div>\n";
@@ -550,6 +562,7 @@ if ($action === 'view')
 }
 if ($action === 'view' || $action === 'edit')
 {
+	print "      <a href=\"" . SELF . "?action=delete&amp;page=".urlencode($page)."\">". __('Delete') ."</a>\n";
 	print "      <a href=\"" . SELF . "?action=rename&amp;page=".urlencode($page)."\">". __('Rename') ."</a>\n";
 }
 print "    </div>\n";
