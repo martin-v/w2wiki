@@ -171,6 +171,7 @@ input#gitmsg
 	font-size: 10px;
 	color: #999999;
 	margin-left: 1em;
+	margin-right: 1em;
 }
 
 .toolbar {
@@ -180,14 +181,14 @@ input#gitmsg
 	font-size: 1em;
 }
 
-.toolbar > a {
+.toolbar > a, .titlebar > a {
 	font-size: 11px;
-	margin-right: 8px;
+	margin-right: 1em;
 	color: #eeeeee;
 	text-decoration: none;
 }
 
-.toolbar > a:hover {
+.toolbar > a:hover, .titlebar > a:hover {
 	text-decoration: underline;
 }
 

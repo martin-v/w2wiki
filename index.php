@@ -73,7 +73,6 @@ if ( count($allowedIPs) > 0 )
 	}
 }
 
-
 function printHeader($title, $bodyclass="")
 {
 	print "<!doctype html>\n";
@@ -118,28 +117,6 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 
 // Support functions
 
-function printToolbar($page)
-{
-	print "    <div class=\"toolbar\">\n";
-	print "      <a class=\"first\" href=\"" . SELF . "?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a>\n";
-	print "      <a href=\"" . SELF . "?action=new\">". __('New') ."</a>\n";
-	if ( !DISABLE_UPLOADS )
-	{
-		print "      <a href=\"" . SELF . VIEW . "?action=upload\">". __('Upload') ."</a>\n";
-	}
-	print "      <a href=\"" . SELF . "?action=all_name\">". __('All') ."</a>\n";
-	print "      <a href=\"" . SELF . "?action=all_date\">". __('Recent') ."</a>\n";
-	print "      <a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>\n";
-	if ( REQUIRE_PASSWORD )
-	{
-		print "      <a href=\"" . SELF . "?action=logout\">". __('Log out') . "</a>";
-	}
-	print "      <form method=\"post\" action=\"" . SELF . "?action=search\">\n";
-	print "        <input class=\"search\" placeholder=\"". __('Search') ."\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" />\n      </form>\n";
-	print "    </div>\n";
-}
-
-
 function descLengthSort($val_1, $val_2)
 {
 	$firstVal = strlen($val_1);
@@ -147,7 +124,6 @@ function descLengthSort($val_1, $val_2)
 	return ( $firstVal > $secondVal ) ?
 		-1 : ( ( $firstVal < $secondVal ) ? 1 : 0);
 }
-
 
 function getAllPageNames()
 {
@@ -165,7 +141,6 @@ function getAllPageNames()
 	closedir($dir);
 	return $filenames;
 }
-
 
 function toHTML($inText)
 {
@@ -563,8 +538,28 @@ else
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 printHeader($title);
-print "    <div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$datetime</span></div>\n";
-printToolbar($page);
+print "    <div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$datetime</span>";
+if ($action === 'view')
+{
+	print "      <a href=\"" . SELF . "?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a>\n";
+}
+print "    </div>\n";
+print "    <div class=\"toolbar\">\n";
+print "      <a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>\n";
+print "      <a href=\"" . SELF . "?action=all_name\">". __('All') ."</a>\n";
+print "      <a href=\"" . SELF . "?action=all_date\">". __('Recent') ."</a>\n";
+print "      <a href=\"" . SELF . "?action=new\">". __('New') ."</a>\n";
+if ( !DISABLE_UPLOADS )
+{
+	print "      <a href=\"" . SELF . VIEW . "?action=upload\">". __('Upload') ."</a>\n";
+}
+if ( REQUIRE_PASSWORD )
+{
+	print "      <a href=\"" . SELF . "?action=logout\">". __('Log out') . "</a>";
+}
+print "      <form method=\"post\" action=\"" . SELF . "?action=search\">\n";
+print "        <input class=\"search\" placeholder=\"". __('Search') ."\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" />\n      </form>\n";
+print "    </div>\n";
 print "    <div class=\"main\">\n\n";
 print "$html\n";
 print "    </div>\n";
