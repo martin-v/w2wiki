@@ -4,7 +4,7 @@
  *
  * Copyright (C) 2007-2009 Steven Frank <http://stevenf.com/>
  * Code may be re-used as long as the above copyright notice is retained.
- * See README.txt for full details.
+ * See README.md for full details.
  *
  * Written with Coda: <http://panic.com/coda/>
  *
@@ -32,7 +32,7 @@ define('PAGES_PATH', BASE_PATH . '/pages');
 //
 // The extension of the Markdown files in the PAGES_PATH
 // folder which are displayed by W2
-define('PAGES_EXT', 'txt');
+define('PAGES_EXT', 'md');
 
 
 // BASE_URI
@@ -177,11 +177,13 @@ define('W2_SESSION_NAME', 'W2');
 // GIT_COMMIT_ENABLED
 //
 // Enable/Disable committing changes in page folder to local git repository
+
 define('GIT_COMMIT_ENABLED', false);
 
 // GIT_PUSH_ENABLED
 //
 // Enable/Disable pushing changes in page folder to a remote git repository
+
 define('GIT_PUSH_ENABLED', false);
 
 
@@ -199,4 +201,4 @@ define('W2_CHARSET', 'UTF-8');
 //
 // Name for locale.
 
-define('W2_LOCALE', 'ja');
+define('W2_LOCALE', 'en');
