@@ -17,14 +17,12 @@ spl_autoload_register(function($class){
 	require str_replace('\\', DIRECTORY_SEPARATOR, ltrim($class, '\\')).'.php';
 });
 
-
 // Get Markdown class
 use Michelf\MarkdownExtra;
 
 
 // User configurable options:
-
-include_once "config.php";
+require_once "config.php";
 
 // Load configured localization:
 require_once 'locales/' . W2_LOCALE . '.php';
@@ -46,11 +44,13 @@ function __( $label, $alt_word = null )
 	return htmlspecialchars($w2_word_set[$label], ENT_QUOTES);
 }
 
-ini_set('session.gc_maxlifetime', W2_SESSION_LIFETIME);
-
-session_set_cookie_params(W2_SESSION_LIFETIME);
-session_name(W2_SESSION_NAME);
-session_start();
+if ( REQUIRE_PASSWORD )
+{
+	ini_set('session.gc_maxlifetime', W2_SESSION_LIFETIME);
+	session_set_cookie_params(W2_SESSION_LIFETIME);
+	session_name(W2_SESSION_NAME);
+	session_start();
+}
 
 if ( count($allowedIPs) > 0 )
 {
