@@ -359,7 +359,11 @@ else if ( $action == "save" )
 	$success = file_put_contents($filename, $newText);
 	error_reporting($errLevel);
 
-	if ( $success )
+	if ( $success === FALSE)
+	{
+		$html = "<p class=\"note\">Error saving changes! Make sure your web server has write access to " . PAGES_PATH . "</p>\n";
+	}
+	else
 	{
 		$html = "<p class=\"note\">" . __('Saved');
 		if (GIT_COMMIT_ENABLED)
@@ -389,11 +393,6 @@ else if ( $action == "save" )
 		}
 		$html .=  "</p>\n";
 	}
-	else
-	{
-		$html = "<p class=\"note\">Error saving changes! Make sure your web server has write access to " . PAGES_PATH . "</p>\n";
-	}
-
 	$html .= toHTML($newText);
 }
 /*
