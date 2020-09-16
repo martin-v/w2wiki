@@ -233,6 +233,7 @@ function destroy_session()
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'view';
 $newPage = "";
 $text = "";
+$html = "";
 if ($action === "view" || $action === "edit" || $action === "save" || $action === "rename" || $action === "delete")
 {
 	// Look for page name following the script name in the URL, like this:
@@ -261,11 +262,57 @@ if ($action === "view" || $action === "edit")
 		$action = "new";
 	}
 }
+$oldgitmsg = "";
+$triedSave = false;
+if ( $action == "save" )
+{
+	$newText = $_REQUEST['newText'];
+	$isNew = $_REQUEST['isNew'];
+	if ($isNew && file_exists($filename))
+	{
+		$html .= "<div class=\"note\">Error creating page '$page' - it already exists! Please choose a different name, or <a href=\"?action=edit&amp;page=".urlencode($page)."\">edit</a> the existing page (this discards current text!)!</div>\n";
+		$action = "new";
+		$text = $newText;
+		$newPage = $page;
+		if (GIT_COMMIT_ENABLED)
+		{
+			$oldgitmsg = $_REQUEST['gitmsg'];
+		}
+		$triedSave = true;
+	}
+	else
+	{
+		$errLevel = error_reporting(0);
+		$success = file_put_contents($filename, $newText);
+		error_reporting($errLevel);
+		if ( $success === FALSE)
+		{
+			$html .= "<div class=\"note\">Error saving changes! Make sure your web server has write access to " . PAGES_PATH . "</div>\n";
+			$action = ($isNew ? "new" : "edit");
+			$text = $newText;
+			$newPage = $page;
+			if (GIT_COMMIT_ENABLED)
+			{
+				$oldgitmsg = $_REQUEST['gitmsg'];
+			}
+			$triedSave = true;
+		}
+		else
+		{
+			$html .= "<div class=\"note\">" . ($isNew ? __('Created'): __('Saved'));
+			$usermsg = $_REQUEST['gitmsg'];
+			$commitmsg = escapeshellarg($page . ($usermsg !== '' ?  (": ".$usermsg) : ($isNew ? " created" : " changed")));
+			gitChangeHandler($commitmsg, $html);
+			$html .=  "</div>\n";
+			$html .= toHTML($newText);
+		}
+	}
+}
 
 if ( $action == "edit" || $action == "new" )
 {
 	$formAction = SELF . (($action == 'edit') ? "/$page" : "");
-	$html = "<form id=\"edit\" method=\"post\" action=\"$formAction\">\n";
+	$html .= "<form id=\"edit\" method=\"post\" action=\"$formAction\">\n";
 
 	if ( $action == "edit" )
 	{
@@ -273,7 +320,7 @@ if ( $action == "edit" || $action == "new" )
 	}
 	else
 	{
-		if ($newPage != "")
+		if ($newPage != "" && !$triedSave)
 		{
 			$html .= "<div class=\"note\">". __('Creating new page since no page with given title exists!') ;
 			// check if similar page exists...
@@ -295,7 +342,7 @@ if ( $action == "edit" || $action == "new" )
 	$html .= "<p><textarea id=\"text\" name=\"newText\" rows=\"" . EDIT_ROWS . "\">$text</textarea></p>\n";
 	if (GIT_COMMIT_ENABLED)
 	{
-		$html .= "<p>Message: <input type=\"text\" id=\"gitmsg\" name=\"gitmsg\" /></p>\n";
+		$html .= "<p>Message: <input type=\"text\" id=\"gitmsg\" name=\"gitmsg\" value=\"$oldgitmsg\" /></p>\n";
 	}
 
 	$html .= "<p><input type=\"hidden\" name=\"action\" value=\"save\" />\n";
@@ -314,11 +361,11 @@ else if ( $action == "upload" )
 {
 	if ( DISABLE_UPLOADS )
 	{
-		$html = '<p>' . __('Image uploading has been disabled on this installation.') . '</p>';
+		$html .= '<p>' . __('Image uploading has been disabled on this installation.') . '</p>';
 	}
 	else
 	{
-		$html = "<form id=\"upload\" method=\"post\" action=\"" . SELF . "\" enctype=\"multipart/form-data\"><p>\n";
+		$html .= "<form id=\"upload\" method=\"post\" action=\"" . SELF . "\" enctype=\"multipart/form-data\"><p>\n";
 		$html .= "<input type=\"hidden\" name=\"action\" value=\"uploaded\" />";
 		$html .= "<input id=\"file\" type=\"file\" name=\"userfile\" />\n";
 		$html .= '<input id="upload" type="submit" value="' . __('Upload') . '" />'."\n";
@@ -337,7 +384,7 @@ else if ( $action == "uploaded" )
 	preg_match('/\.([^.]+)$/', $dstName, $matches);
 	$fileExt = isset($matches[1]) ? $matches[1] : null;
 
-	$html = "<div class=\"note\">";
+	$html .= "<div class=\"note\">";
 	if (in_array($fileType, explode(',', VALID_UPLOAD_TYPES)) &&
 		in_array($fileExt, explode(',', VALID_UPLOAD_EXTS)))
 	{
@@ -352,11 +399,11 @@ else if ( $action == "uploaded" )
 			$error_code = $_FILES['userfile']['error'];
 			if ( $error_code === 0 ) {
 				// Likely a permissions issue
-				$html = __('Upload error') .": can't write to ".$path."<br/><br/>\n".
+				$html .= __('Upload error') .": can't write to ".$path."<br/><br/>\n".
 					"Check that your permissions are set correctly.";
 			} else {
 				// Give generic error message
-				$html = "Upload error, error #".$error_code."<br/><br/>\n".
+				$html .= "Upload error, error #".$error_code."<br/><br/>\n".
 					"Please see <a href=\"https://www.php.net/manual/en/features.file-upload.errors.php\">here</a> for more information.<br/><br/>\n".
 					"If you see this message, please <a href=\"https://github.com/codeling/w2wiki/issues\">file a bug to improve w2wiki</a>";
 			}
@@ -368,32 +415,10 @@ else if ( $action == "uploaded" )
 	}
 	$html .= "</div>\n";
 }
-else if ( $action == "save" )
-{
-	$newText = $_REQUEST['newText'];
-	$isNew = $_REQUEST['isNew'];
-	$errLevel = error_reporting(0);
-	$success = file_put_contents($filename, $newText);
-	error_reporting($errLevel);
-
-	if ( $success === FALSE)
-	{
-		$html = "<div class=\"note\">Error saving changes! Make sure your web server has write access to " . PAGES_PATH . "</div>\n";
-	}
-	else
-	{
-		$html = "<div class=\"note\">" . ($isNew ? __('Created'): __('Saved'));
-		$usermsg = $_REQUEST['gitmsg'];
-		$commitmsg = escapeshellarg($page . ($usermsg !== '' ?  (": ".$usermsg) : ($isNew ? " created" : " changed")));
-		gitChangeHandler($commitmsg, $html);
-		$html .=  "</div>\n";
-	}
-	$html .= toHTML($newText);
-}
 else if ( $action === "rename" || $action === "delete")
 {
 	$actionName = ($action === "delete")?__('Delete'):__('Rename');
-	$html = "<form id=\"$action\" method=\"post\" action=\"" . SELF . "\">";
+	$html .= "<form id=\"$action\" method=\"post\" action=\"" . SELF . "\">";
 	$html .= "<p>".$actionName." $page ".
 		(($action==="rename")? (__('to')." <input id=\"newPageName\" type=\"text\" name=\"newPageName\" value=\"" . htmlspecialchars($page) . "\" class=\"pagename\" />") : "?") . "</p>";
 	$html .= "<p><input id=\"$action\" type=\"submit\" value=\"$actionName\">";
@@ -406,7 +431,7 @@ else if ( $action === "renamed" || $action === "deleted")
 {
 	$oldPageName = sanitizeFilename($_REQUEST['oldPageName']);
 	$newPageName = ($action === "deleted") ? "": sanitizeFilename($_REQUEST['newPageName']);
-	$html = "<div class=\"note\">";
+	$html .= "<div class=\"note\">";
 	if ($action === "deleted")
 	{
 		$success = unlink(fileNameForPage($oldPageName));
@@ -455,7 +480,7 @@ else if ( $action == "all_name" )
 {
 	$pageNames = getAllPageNames();
 	natcasesort($pageNames);
-	$html = "<p>".__('Total').": ".count($pageNames)." pages</p>";
+	$html .= "<p>".__('Total').": ".count($pageNames)." pages</p>";
 	$html .= "<table>";
 	foreach ($pageNames as $page)
 	{
@@ -481,7 +506,7 @@ else if ( $action == "all_date" )
 	}
 	closedir($dir);
 	arsort($filelist, SORT_NUMERIC);
-	$html = "<table>\n";
+	$html .= "<table>\n";
 	foreach ($filelist as $key => $value)
 	{
 		$date_format = __('date_format', TITLE_DATE);
@@ -495,7 +520,7 @@ else if ( $action == "search" )
 {
 	$matches = 0;
 	$q = $_REQUEST['q'];
-	$html = "    <h1>Search: $q</h1>\n".
+	$html .= "    <h1>Search: $q</h1>\n".
 		"    <ul>\n";
 
 	if ( trim($q) != "" )
@@ -519,7 +544,7 @@ else if ( $action == "search" )
 }
 else
 {
-	$html = empty($text) ? '' : toHTML($text);
+	$html .= empty($text) ? '' : toHTML($text);
 }
 
 $datetime = '';
