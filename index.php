@@ -557,14 +557,18 @@ header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 printHeader($title);
 print "    <div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$datetime</span>";
-if ($action === 'view')
+if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action == 'save' || $action === 'edit')
 {
-	print "      <a href=\"" . SELF . "?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a>\n";
-}
-if ($action === 'view' || $action === 'edit')
-{
-	print "      <a href=\"" . SELF . "?action=delete&amp;page=".urlencode($page)."\">". __('Delete') ."</a>\n";
-	print "      <a href=\"" . SELF . "?action=rename&amp;page=".urlencode($page)."\">". __('Rename') ."</a>\n";
+	$pageActions = array('edit', 'delete', 'rename');
+	$pageActionNames = array(__('Edit'), __('Delete'), __('Rename'));
+	for ($i = 0; $i < count($pageActions); $i++ )
+	{
+		if ($action != $pageActions[$i])
+		{
+			print "      <a href=\"".SELF."?action=".$pageActions[$i].
+				"&amp;page=".urlencode($page)."\">".$pageActionNames[$i]."</a>\n";
+		}
+	}
 }
 print "    </div>\n";
 print "    <div class=\"toolbar\">\n";
