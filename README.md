@@ -42,7 +42,9 @@ Originally written by [Steven Frank](https://github.com/panicsteve/w2wiki) and o
 - [nickodell](https://github.com/nickodell/w2wiki)
 - [pilem](https://github.com/pilem/w2)
 
-Uses [PHP Markdown](https://github.com/michelf/php-markdown) by Michel Fortin for rendering Markdown to HTML.
+W2 wiki uses [PHP Markdown](https://github.com/michelf/php-markdown) by Michel Fortin for rendering Markdown to HTML.
+
+The [Markdown syntax](https://github.com/codeling/w2wiki/blob/master/pages/Markdown Syntax.md) description is taken from [daringfireball.net](https://daringfireball.net/projects/markdown/syntax).
 
 Maintainer of this fork is [codeling](https://github.com/codeling/w2wiki).
 
