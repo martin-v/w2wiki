@@ -183,14 +183,14 @@ function toHTML($inText)
 {
 	if ( AUTOLINK_PAGE_TITLES )
 	{
-		$filenames = getAllPageNames();
-		uasort($filenames, "descLengthSort");
-		foreach ( $filenames as $filename )
+		$pagenames = getAllPageNames();
+		uasort($pagenames, "descLengthSort");
+		foreach ( $pagenames as $pageName )
 		{
-			$inText = preg_replace("/(?<![\>\[\/])($filename)(?!\]\>)/im", "<a href=\"" . SELF . VIEW . "/$filename\">\\1</a>", $inText);
+			// match pageName, but only if it isn't inside another word or inside braces (as in "[$pageName]").
+			$inText = preg_replace("/(?<![\[a-zA-Z])$pageName(?![\]a-zA-Z])/i", "[[$pageName]]", $inText);
 		}
 	}
-
 	preg_match_all(
 		"/\[\[(.*?)\]\]/",
 		$inText,
@@ -206,7 +206,9 @@ function toHTML($inText)
 			pageLink($linkedpage, ($exists? "" : " class=\"noexist\"")), $inText);
 	}
 	$inText = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $inText);
-	$inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
+	// email links - shouldn't this be "mailto" ?
+	// $inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
+
 	$html = MarkdownExtra::defaultTransform($inText);
 	$inText = htmlentities($inText);
 
