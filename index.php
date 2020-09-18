@@ -88,7 +88,6 @@ function printHeader($title, $bodyclass="")
 	print "  <body".($bodyclass != "" ? " class=\"$bodyclass\"":"").">\n";
 }
 
-
 function printFooter()
 {
 	print "  </body>\n";
@@ -147,6 +146,11 @@ function fileNameForPage($page)
 	return PAGES_PATH . "/$page." . PAGES_EXT;
 }
 
+function pageLink($page, $attributes="")
+{
+	return "<a href=\"" . SELF . VIEW . "/".urlencode($page)."\"$attributes>$page</a>";
+}
+
 function checkedExecute(&$html, $cmd)
 {
 	$returnValue = 0;
@@ -198,13 +202,11 @@ function toHTML($inText)
 		$linkedpage = $matches[1][$i];
 		$linkedfilename = fileNameForPage($linkedpage);
 		$exists = file_exists($linkedfilename);
-		$inText = preg_replace("|\[\[".preg_quote($linkedpage)."\]\]|", "<a ".
-			($exists? "" : "class=\"noexist\"")
-			." href=\"" . SELF . VIEW . "/".urlencode($linkedpage)."\">$linkedpage</a>", $inText);
+		$inText = preg_replace("|\[\[".preg_quote($linkedpage)."\]\]|",
+			pageLink($linkedpage, ($exists? "" : " class=\"noexist\"")), $inText);
 	}
 	$inText = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $inText);
 	$inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
-
 	$html = MarkdownExtra::defaultTransform($inText);
 	$inText = htmlentities($inText);
 
@@ -325,13 +327,11 @@ if ( $action == "edit" || $action == "new" )
 			$html .= "<div class=\"note\">". __('Creating new page since no page with given title exists!') ;
 			// check if similar page exists...
 			$pageNames = getAllPageNames();
-			foreach($pageNames as $page)
+			foreach($pageNames as $pageName)
 			{
-				if (levenshtein($newPage, $page) < 3)
+				if (levenshtein($newPage, $pageName) < 3)
 				{
-//	print "<a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>";
-
-					$html .= "<br/><strong>Note:</strong> Found similar page <a href=\"".SELF."/".urlencode($page)."\">$page</a>. Maybe you meant to edit this instead?";
+					$html .= "<br/><strong>Note:</strong> Found similar page ".pageLink($pageName).". Maybe you meant to edit this instead?";
 				}
 			}
 			$html .= "</div>\n";
@@ -399,11 +399,11 @@ else if ( $action == "uploaded" )
 			$error_code = $_FILES['userfile']['error'];
 			if ( $error_code === 0 ) {
 				// Likely a permissions issue
-				$html .= __('Upload error') .": can't write to ".$path."<br/><br/>\n".
+				$html .= __('Upload error') .": Can't write to ".$path."<br/><br/>\n".
 					"Check that your permissions are set correctly.";
 			} else {
 				// Give generic error message
-				$html .= "Upload error, error #".$error_code."<br/><br/>\n".
+				$html .= __('Upload error').", error #".$error_code."<br/><br/>\n".
 					"Please see <a href=\"https://www.php.net/manual/en/features.file-upload.errors.php\">here</a> for more information.<br/><br/>\n".
 					"If you see this message, please <a href=\"https://github.com/codeling/w2wiki/issues\">file a bug to improve w2wiki</a>";
 			}
@@ -485,34 +485,28 @@ else if ( $action == "all_name" )
 	foreach ($pageNames as $page)
 	{
 		$html .= "<tr>".
-				"<td><a href=\"" . SELF . VIEW . "/".urlencode($page)."\">$page</a></td>".
-				"<td width=\"20\"></td>".
-				"<td><a href=\"?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a></td>".
+			"<td>".pageLink($page)."</td>".
+			"<td width=\"20\"></td>".
+			"<td><a href=\"?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a></td>".
 			"</tr>\n";
 	}
 	$html .= "</table>\n";
 }
 else if ( $action == "all_date" )
 {
-	$dir = opendir(PAGES_PATH);
+	$pageNames = getAllPageNames();
 	$filelist = array();
-	while ( $file = readdir($dir) )
+	foreach($pageNames as $page)
 	{
-		if ( $file[0] == "." || preg_match("/".PAGES_EXT."$/", $file) != 1)
-		{
-			continue;
-		}
-		$filelist[preg_replace("/(.*?)\.".PAGES_EXT."/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file)] = filemtime(PAGES_PATH . "/$file");
+		$filelist[$page] = filemtime(fileNameForPage($page));
 	}
-	closedir($dir);
 	arsort($filelist, SORT_NUMERIC);
 	$html .= "<table>\n";
 	foreach ($filelist as $key => $value)
 	{
 		$date_format = __('date_format', TITLE_DATE);
-		$html .= "<tr><td valign=\"top\">$key</td><td width=\"20\"></td><td valign=\"top\"><nobr>"
-			. date( $date_format, $value)
-			. "</nobr></td></tr>\n";
+		$html .= "<tr><td valign=\"top\">".pageLink($key)."</td><td width=\"20\"></td>".
+			"<td valign=\"top\"><nobr>".date( $date_format, $value)."</nobr></td></tr>\n";
 	}
 	$html .= "</table>\n";
 }

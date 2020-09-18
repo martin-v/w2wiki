@@ -12,7 +12,6 @@
  
 * {
 	font-family: Helvetica, sans-serif;
-	font-size: 13px;
 	margin: 0;
 	padding: 0;
 }
@@ -69,7 +68,6 @@ ul,
 ol {
 	margin-left: 1em;
 	padding-left: .5em;
-	margin-bottom: .5em;
 	list-style-position: outside;
 }
 
@@ -91,7 +89,7 @@ pre {
 
 	background: #ffffcc;
 	border: 1px dashed gray;
-	padding: 0.2em;
+	padding: .2em;
 }
 
 code {
@@ -133,7 +131,7 @@ input#gitmsg
 }
 
 .main {	
-	padding: 8px;
+	padding: .3em .3em .3em 1em;
 }
 
 .main a[href^="http"]::after {
@@ -164,7 +162,7 @@ input#gitmsg
 	color: #ffffff;
 	font-size: 18px;
 	font-weight: bold;
-	padding: 4px 4px 4px 12px;
+	padding: 4px 4px 4px 1em;
 }
 
 .titledate {
@@ -177,7 +175,7 @@ input#gitmsg
 .toolbar {
 	background-color: #777777;
 	background: -webkit-gradient(linear, left top, left bottom, from(#666666), to(#444444));
-	padding: 4px 4px 4px 12px;
+	padding: 4px 4px 4px 1em;
 	font-size: 1em;
 }
 
