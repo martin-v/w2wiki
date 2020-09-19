@@ -99,19 +99,27 @@ code {
 
 table {
 	border-collapse: collapse;
+	padding: .2em;
 }
-
-table, td {
-	padding: 2px;
-}
-
-tr:nth-child(even) {
+  td {
+	padding: .1em 1em .1em .1em;
+  }
+  thead {
+	border-bottom: 1px solid black;
+	font-weight: bold;
+  }
+  thead td a {
+	text-decoration:none;
+  }
+  thead td span.sortBy:after {
+	content: "\25BC";
+  }
+  tr:nth-child(even) {
 	background: #e4e4e4;
-}
-
-tr:nth-child(odd) {
+  }
+  tr:nth-child(odd) {
 	background: #eeeeee;
-}
+  }
 
 textarea {
 	font-family: Menlo, Courier, monospace;

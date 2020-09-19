@@ -478,39 +478,48 @@ else if ( $action === "renamed" || $action === "deleted")
 	}
 	$html .= "</div>\n";
 }
-else if ( $action == "all_name" )
-{
-	$pageNames = getAllPageNames();
-	natcasesort($pageNames);
-	$html .= "<p>".__('Total').": ".count($pageNames)." pages</p>";
-	$html .= "<table>";
-	foreach ($pageNames as $page)
-	{
-		$html .= "<tr>".
-			"<td>".pageLink($page)."</td>".
-			"<td width=\"20\"></td>".
-			"<td><a href=\"?action=edit&amp;page=".urlencode($page)."\">". __('Edit') ."</a></td>".
-			"</tr>\n";
-	}
-	$html .= "</table>\n";
-}
-else if ( $action == "all_date" )
+else if ( $action == "all" )
 {
 	$pageNames = getAllPageNames();
 	$filelist = array();
-	foreach($pageNames as $page)
+	$sortBy = isset($_REQUEST['sortBy']) ? $_REQUEST['sortBy'] : 'name';
+	if (!in_array($sortBy, array('name', 'recent')))
 	{
-		$filelist[$page] = filemtime(fileNameForPage($page));
+		$sortBy = 'name';
 	}
-	arsort($filelist, SORT_NUMERIC);
-	$html .= "<table>\n";
-	foreach ($filelist as $key => $value)
+	if ($sortBy === 'name')
 	{
-		$date_format = __('date_format', TITLE_DATE);
-		$html .= "<tr><td valign=\"top\">".pageLink($key)."</td><td width=\"20\"></td>".
-			"<td valign=\"top\"><nobr>".date( $date_format, $value)."</nobr></td></tr>\n";
+		natcasesort($pageNames);
+		foreach($pageNames as $page)
+		{
+			$filelist[$page] = filemtime(fileNameForPage($page));
+		}
 	}
-	$html .= "</table>\n";
+	else
+	{
+		foreach($pageNames as $page)
+		{
+			$filelist[$page] = filemtime(fileNameForPage($page));
+		}
+		arsort($filelist, SORT_NUMERIC);
+	}
+	$html .= "<p>".__('Total').": ".count($pageNames)." pages</p>";
+	$html .= "<table><thead>";
+	$html .= "<tr>".
+		"<td>".(($sortBy!='name')?("<a href=\"".SELF."?action=all&sortBy=name\">Name</a>"):"<span class=\"sortBy\">Name</span>")."</td>".
+		"<td>".(($sortBy!='recent')?("<a href=\"".SELF."?action=all&sortBy=recent\">Modified</a>"):"<span class=\"sortBy\">Modified</span>")."</td>".
+		"</tr></thead><tbody>";
+	$date_format = __('date_format', TITLE_DATE);
+
+	foreach ($filelist as $pageName => $pageDate)
+	{
+		$html .= "<tr>".
+			"<td>".pageLink($pageName)."</td>".
+			"<td valign=\"top\"><nobr>".date( $date_format, $pageDate)."</nobr></td>".
+			"<td><a href=\"".SELF."?action=edit&amp;page=".urlencode($pageName)."\">". __('Edit') ."</a></td>".
+			"</tr>\n";
+	}
+	$html .= "</tbody></table>\n";
 }
 else if ( $action == "search" )
 {
@@ -543,7 +552,7 @@ else
 
 $datetime = '';
 
-if ( ($action == "all_name") || ($action == "all_date"))
+if ( ($action == "all"))
 {
 	$title = __("All");
 }
@@ -592,8 +601,7 @@ if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action 
 print "    </div>\n";
 print "    <div class=\"toolbar\">\n";
 print "      <a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>\n";
-print "      <a href=\"" . SELF . "?action=all_name\">". __('All') ."</a>\n";
-print "      <a href=\"" . SELF . "?action=all_date\">". __('Recent') ."</a>\n";
+print "      <a href=\"" . SELF . "?action=all\">". __('All') ."</a>\n";
 print "      <a href=\"" . SELF . "?action=new\">". __('New') ."</a>\n";
 if ( !DISABLE_UPLOADS )
 {
