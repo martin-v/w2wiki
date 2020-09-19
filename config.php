@@ -68,6 +68,12 @@ define('DEFAULT_PAGE', 'Home');
 
 define('CSS_FILE', 'index.css');
 
+// SIDEBAR_FILE
+//
+// The name of the page to be shown as sidebar (leave empty to disable sidebar feature)
+
+define ('SIDEBAR_PAGE', '_sidebar');
+
 // --------------------
 // File upload settings
 // --------------------

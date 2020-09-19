@@ -608,6 +608,21 @@ if ( REQUIRE_PASSWORD )
 print "      <form method=\"post\" action=\"" . SELF . "?action=search\">\n";
 print "        <input class=\"search\" placeholder=\"". __('Search') ."\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" />\n      </form>\n";
 print "    </div>\n";
+if (SIDEBAR_PAGE != '')
+{
+	print "    <div class=\"sidebar\">\n\n";
+	$sidebarFile = fileNameForPage(SIDEBAR_PAGE);
+	if (file_exists($sidebarFile))
+	{
+		$text = file_get_contents($sidebarFile);
+	}
+	else
+	{
+		$text = __('Sidebar file could not be found')." ($sidebarFile)";
+	}
+	print toHTML($text);
+	print "    </div>\n";
+}
 print "    <div class=\"main\">\n\n";
 print "$html\n";
 print "    </div>\n";

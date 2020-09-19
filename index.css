@@ -190,6 +190,14 @@ input#gitmsg
 	text-decoration: underline;
 }
 
+.sidebar {
+	float: right;
+	margin-right: 2em;
+	margin-top: 1em;
+	padding: .5em;
+	border: solid 1px #666644;
+}
+
 input {
 	font-size: 1em;
 }
