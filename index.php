@@ -231,6 +231,21 @@ function destroy_session()
 	unset($_SESSION);
 }
 
+function getPageActions($page)
+{
+	$pageActions = array('edit', 'delete', 'rename');
+	$pageActionNames = array(__('Edit'), __('Delete'), __('Rename'));
+	$result = '';
+	for ($i = 0; $i < count($pageActions); $i++ )
+	{
+		if ($action != $pageActions[$i])
+		{
+			$result .= "      <a href=\"".SELF."?action=".$pageActions[$i].
+				"&amp;page=".urlencode($page)."\">".$pageActionNames[$i]."</a>\n";
+		}
+	}
+	return $result;
+}
 
 // Main code
 
@@ -516,7 +531,7 @@ else if ( $action == "all" )
 		$html .= "<tr>".
 			"<td>".pageLink($pageName)."</td>".
 			"<td valign=\"top\"><nobr>".date( $date_format, $pageDate)."</nobr></td>".
-			"<td><a href=\"".SELF."?action=edit&amp;page=".urlencode($pageName)."\">". __('Edit') ."</a></td>".
+			"<td>".getPageActions($pageName)."</td>".
 			"</tr>\n";
 	}
 	$html .= "</tbody></table>\n";
@@ -587,16 +602,7 @@ printHeader($title);
 print "    <div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$datetime</span>";
 if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action == 'save' || $action === 'edit')
 {
-	$pageActions = array('edit', 'delete', 'rename');
-	$pageActionNames = array(__('Edit'), __('Delete'), __('Rename'));
-	for ($i = 0; $i < count($pageActions); $i++ )
-	{
-		if ($action != $pageActions[$i])
-		{
-			print "      <a href=\"".SELF."?action=".$pageActions[$i].
-				"&amp;page=".urlencode($page)."\">".$pageActionNames[$i]."</a>\n";
-		}
-	}
+	print(getPageActions($page));
 }
 print "    </div>\n";
 print "    <div class=\"toolbar\">\n";
