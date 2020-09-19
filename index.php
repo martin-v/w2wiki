@@ -531,8 +531,6 @@ else if ( $action == "search" )
 				$html .= "<li><a href=\"".SELF.VIEW."/$searchPage\">$searchPage</a></li>\n";
 			}
 		}
-
-		closedir($dir);
 	}
 
 	$html .= "    </ul>\n";
