@@ -134,7 +134,6 @@ textarea {
 	}
   }
 
-
 input[type="text"],
 textarea {
 	padding: 2px;
@@ -166,10 +165,16 @@ input#gitmsg
 .note {
 	background-color: #ffffcc;
 	padding: 4px;
-	margin: 0 8px 8px 8px;
+	margin: 0;
 	color: #666644;
 	border: solid 1px #666644;
+	width: 75%;
 }
+  @media only screen and (max-width: 45em) {
+	.note {
+		width: 99%;
+	}
+  }
 
 .titlebar {
 	background-color: #222222;
@@ -214,18 +219,13 @@ input#gitmsg
 }
   @media only screen and (max-width: 45em) {
 	.sidebar {
-		margin-left: 1em;;
+		margin-left: 1em;
 		float: none;
-		width: 99%-1em;
 	}
   }
 
 input {
 	font-size: 1em;
-}
-
-input[type="text"] {
-	padding-left: .5em;
 }
 
 input.search {
