@@ -74,6 +74,12 @@ define('CSS_FILE', 'index.css');
 
 define ('SIDEBAR_PAGE', '_sidebar');
 
+// PAGE_TITLE
+//
+// A title prepended to the title head tag of all pages of the wiki
+
+define ('PAGE_TITLE', 'Wiki: ');
+
 // --------------------
 // File upload settings
 // --------------------

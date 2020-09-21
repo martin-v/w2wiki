@@ -83,7 +83,7 @@ function printHeader($title, $bodyclass="")
 	print "    <link rel=\"icon\" href=\"w2-icon.png\"/>\n";
 	//print "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=false\" />\n";
 	print "    <link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
-	print "    <title>$title</title>\n";
+	print "    <title>".PAGE_TITLE."$title</title>\n";
 	print "  </head>\n";
 	print "  <body".($bodyclass != "" ? " class=\"$bodyclass\"":"").">\n";
 }
