@@ -346,7 +346,7 @@ if ( $action == "edit" || $action == "new" )
 			$pageNames = getAllPageNames();
 			foreach($pageNames as $pageName)
 			{
-				if (levenshtein($newPage, $pageName) < 3)
+				if (levenshtein(strtoupper($newPage), strtoupper($pageName)) < sqrt(min(strlen($newPage), strlen($pageName))) )
 				{
 					$html .= "<br/><strong>Note:</strong> Found similar page ".pageLink($pageName).". Maybe you meant to edit this instead?";
 				}
