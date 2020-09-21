@@ -546,19 +546,27 @@ else if ( $action == "search" )
 	if ( trim($q) != "" )
 	{
 		$pagenames = getAllPageNames();
+		$found = false;
 		foreach($pagenames as $searchPage)
 		{
+			if ($searchPage === $q)
+			{
+				$found == true;
+			}
 			$text = file_get_contents(fileNameForPage($searchPage));
 			if ( preg_match("/{$q}/i", $text) || preg_match("/{$q}/i", $searchPage) )
 			{
 				++$matches;
-				$html .= "<li><a href=\"".SELF.VIEW."/$searchPage\">$searchPage</a></li>\n";
+				$html .= "        <li><a href=\"".SELF.VIEW."/$searchPage\">$searchPage</a></li>\n";
 			}
 		}
 	}
-
-	$html .= "    </ul>\n";
-	$html .= "    <p>$matches matched</p>\n";
+	if (!$found)
+	{
+		$html .= "        <li><a class=\"noexist\" href=\"".SELF.VIEW."?action=view&page=$q\">".__('Create page')." '$q'</a></li>";
+	}
+	$html .= "      </ul>\n";
+	$html .= "      <p>$matches matched</p>\n";
 }
 else
 {
