@@ -204,6 +204,7 @@ input#gitmsg
 	margin-right: 1em;
 	color: #eeeeee;
 	text-decoration: none;
+	font-weight: normal;
 }
 
 .toolbar > a:hover, .titlebar > a:hover {
