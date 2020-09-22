@@ -146,9 +146,14 @@ function fileNameForPage($page)
 	return PAGES_PATH . "/$page." . PAGES_EXT;
 }
 
+function sanitizeFilename($inFileName)
+{
+	return str_replace(array('..', '~', '/', '\\', ':'), '-', $inFileName);
+}
+
 function pageLink($page, $attributes="")
 {
-	return "<a href=\"" . SELF . VIEW . "/".urlencode($page)."\"$attributes>$page</a>";
+	return "<a href=\"" . SELF . VIEW . "/".urlencode(sanitizeFilename($page))."\"$attributes>$page</a>";
 }
 
 function checkedExecute(&$html, $cmd)
@@ -200,7 +205,7 @@ function toHTML($inText)
 	for ($i = 0; $i < count($matches[0]); $i++)
 	{
 		$linkedpage = $matches[1][$i];
-		$linkedfilename = fileNameForPage($linkedpage);
+		$linkedfilename = fileNameForPage(sanitizeFilename($linkedpage));
 		$exists = file_exists($linkedfilename);
 		$inText = preg_replace("|\[\[".preg_quote($linkedpage)."\]\]|",
 			pageLink($linkedpage, ($exists? "" : " class=\"noexist\"")), $inText);
@@ -213,11 +218,6 @@ function toHTML($inText)
 	$inText = htmlentities($inText);
 
 	return $html;
-}
-
-function sanitizeFilename($inFileName)
-{
-	return str_replace(array('..', '~', '/', '\\', ':'), '-', $inFileName);
 }
 
 function destroy_session()
@@ -469,7 +469,8 @@ else if ( $action === "renamed" || $action === "deleted")
 		{
 			$content = file_get_contents(fileNameForPage($replacePage));
 			$count = 0;
-			$newContent = str_replace("[[$oldPageName]]", "[[$newPageName]]", $content, $count);
+			$newContent = str_replace("[[$oldPageName]]",
+				(($action === "deleted") ? "" : "[[$newPageName]]"), $content, $count);
 			if ($count > 0) // if something changed
 			{
 				$changedPages[] = $replacePage." ($count ".__('matches').")";
