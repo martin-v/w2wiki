@@ -432,24 +432,24 @@ else if ( $action == "uploaded" )
 	}
 	$html .= "</div>\n";
 }
-else if ( $action === "rename" || $action === "delete")
+else if ( $action === 'rename' || $action === 'delete')
 {
-	$actionName = ($action === "delete")?__('Delete'):__('Rename');
+	$actionName = ($action === 'delete')?__('Delete'):__('Rename');
 	$html .= "<form id=\"$action\" method=\"post\" action=\"" . SELF . "\">";
 	$html .= "<p>".$actionName." $page ".
-		(($action==="rename")? (__('to')." <input id=\"newPageName\" type=\"text\" name=\"newPageName\" value=\"" . htmlspecialchars($page) . "\" class=\"pagename\" />") : "?") . "</p>";
+		(($action==='rename')? (__('to')." <input id=\"newPageName\" type=\"text\" name=\"newPageName\" value=\"" . htmlspecialchars($page) . "\" class=\"pagename\" />") : "?") . "</p>";
 	$html .= "<p><input id=\"$action\" type=\"submit\" value=\"$actionName\">";
 	$html .= "<input id=\"cancel\" type=\"button\" onclick=\"history.go(-1);\" value=\"Cancel\" />\n";
 	$html .= "<input type=\"hidden\" name=\"action\" value=\"${action}d\" />";
 	$html .= "<input type=\"hidden\" name=\"oldPageName\" value=\"" . htmlspecialchars($page) . "\" />";
 	$html .= "</p></form>";
 }
-else if ( $action === "renamed" || $action === "deleted")
+else if ( $action === 'renamed' || $action === 'deleted')
 {
 	$oldPageName = sanitizeFilename($_REQUEST['oldPageName']);
-	$newPageName = ($action === "deleted") ? "": sanitizeFilename($_REQUEST['newPageName']);
+	$newPageName = ($action === 'deleted') ? "": sanitizeFilename($_REQUEST['newPageName']);
 	$html .= "<div class=\"note\">";
-	if ($action === "deleted")
+	if ($action === 'deleted')
 	{
 		$success = unlink(fileNameForPage($oldPageName));
 	}
@@ -459,7 +459,7 @@ else if ( $action === "renamed" || $action === "deleted")
 	}
 	if ($success)
 	{
-		$message = ($action === "deleted") ? "Removed $oldPageName." :
+		$message = ($action === 'deleted') ? "Removed $oldPageName." :
 			"Renamed $oldPageName to $newPageName.";
 		$html .= $message;
 		// Change links in all pages to point to new page
@@ -597,7 +597,7 @@ else if ( $action == "search" )
 {
 	$title = __("Search");
 }
-else
+else if ($filename != '')
 {
 	$title = $page;
 	$date_format = __('date_format', TITLE_DATE);
@@ -605,6 +605,10 @@ else
 	{
 		$datetime = "<span class=\"titledate\">" . date($date_format, @filemtime($filename)) . "</span>";
 	}
+}
+else
+{
+	$title = __($action);
 }
 
 // Disable caching on the client (the iPhone is pretty agressive about this
