@@ -493,6 +493,11 @@ else if ( $action === "renamed" || $action === "deleted")
 		$page = $oldPageName;
 	}
 	$html .= "</div>\n";
+	if ($action === 'renamed')
+	{
+		$text = file_get_contents(fileNameForPage($page));
+		$html .= toHTML($text);
+	}
 }
 else if ( $action == "all" )
 {
@@ -609,7 +614,7 @@ header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 printHeader($title);
 print "    <div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$datetime</span>";
-if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action == 'save' || $action === 'edit')
+if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action == 'save' || $action === 'edit' || $action === 'renamed')
 {
 	print(getPageActions($page));
 }
