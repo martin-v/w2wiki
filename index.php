@@ -148,7 +148,7 @@ function fileNameForPage($page)
 
 function sanitizeFilename($inFileName)
 {
-	return str_replace(array('..', '~', '/', '\\', ':'), '-', $inFileName);
+	return str_replace(array('~', '/', '\\', ':'), '-', $inFileName);
 }
 
 function pageLink($page, $attributes="")
