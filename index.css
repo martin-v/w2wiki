@@ -152,6 +152,11 @@ input#gitmsg
 	content: url('internet.png');
 }
 
+.main a.literalMatch {
+	font-weight: bold;
+	color: #00f;
+}
+
 .main a.noexist {
 	color: #b00 !important;
 }

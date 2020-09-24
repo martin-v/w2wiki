@@ -552,18 +552,19 @@ else if ( $action == "search" )
 	if ( trim($q) != "" )
 	{
 		$pagenames = getAllPageNames();
-		$found = false;
+		$found = FALSE;
 		foreach($pagenames as $searchPage)
 		{
 			if ($searchPage === $q)
 			{
-				$found == true;
+				$found = TRUE;
 			}
 			$text = file_get_contents(fileNameForPage($searchPage));
 			if ( preg_match("/{$q}/i", $text) || preg_match("/{$q}/i", $searchPage) )
 			{
 				++$matches;
-				$html .= "        <li><a href=\"".SELF.VIEW."/$searchPage\">$searchPage</a></li>\n";
+				$link = pageLink($searchPage, ($searchPage === $q)? " class=\"literalMatch\"": "");
+				$html .= "        <li>$link</li>\n";
 			}
 		}
 	}
