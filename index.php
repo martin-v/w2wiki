@@ -153,7 +153,7 @@ function sanitizeFilename($inFileName)
 
 function pageLink($page, $attributes="")
 {
-	return "<a href=\"" . SELF . VIEW . "/".urlencode(sanitizeFilename($page))."\"$attributes>$page</a>";
+	return "<a href=\"" . SELF . VIEW . "/".str_replace("%23", "#", urlencode(sanitizeFilename($page)))."\"$attributes>$page</a>";
 }
 
 function checkedExecute(&$html, $cmd)
@@ -184,6 +184,11 @@ function gitChangeHandler($commitmsg, $html)
 	}
 }
 
+function toHTMLID($noid)
+{	// in HTML5, only spaces aren't allowed
+	return str_replace(" ", "-", $noid);
+}
+
 function toHTML($inText)
 {
 	if ( AUTOLINK_PAGE_TITLES )
@@ -205,9 +210,10 @@ function toHTML($inText)
 	for ($i = 0; $i < count($matches[0]); $i++)
 	{
 		$linkedpage = $matches[1][$i];
-		$linkedfilename = fileNameForPage(sanitizeFilename($linkedpage));
+		$pagePart = explode('#', $linkedpage)[0];  // split away an eventual anchor part
+		$linkedfilename = fileNameForPage(sanitizeFilename($pagePart));
 		$exists = file_exists($linkedfilename);
-		$inText = preg_replace("|\[\[".preg_quote($linkedpage)."\]\]|",
+		$inText = str_replace("[[$linkedpage]]",
 			pageLink($linkedpage, ($exists? "" : " class=\"noexist\"")), $inText);
 	}
 	$inText = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $inText);
@@ -215,8 +221,22 @@ function toHTML($inText)
 	// $inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
 
 	$html = MarkdownExtra::defaultTransform($inText);
-	$inText = htmlentities($inText);
 
+	// add an anchor in all title tags (h1/2/3/4):
+	preg_match_all(
+		"/<h([1-4])>(.*?)<\/h\\1>/",
+		$html,
+		$matches,
+		PREG_PATTERN_ORDER
+	);
+	for ($i = 0; $i < count($matches[0]); $i++)
+	{
+		$prefix = "<h".$matches[1][$i].">";
+		$caption = $matches[2][$i];
+		$suffix = substr_replace($prefix, "/", 1, 0);
+		$html = str_replace("$prefix$caption$suffix",
+			"$prefix<a id=\"".toHTMLID($caption)."\">$caption</a>$suffix", $html);
+	}
 	return $html;
 }
 
