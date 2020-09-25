@@ -641,7 +641,7 @@ else
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 printHeader($title);
-print "    <div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$datetime</span>";
+print "    <div class=\"titlebar\"><span class=\"title\">$title</span>$datetime";
 if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action == 'save' || $action === 'edit' || $action === 'renamed')
 {
 	print(getPageActions($page, $action));

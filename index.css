@@ -14,7 +14,7 @@
 	font-family: Helvetica, sans-serif;
 	margin: 0;
 	padding: 0;
-	font-size: .95em;
+	font-size: 0.97em;
 }
 
 body {
@@ -78,8 +78,8 @@ p {
 
 pre {
 	font-family: Menlo, Courier, monospace;
-	margin-left: 12px;
-	margin-bottom: 12px;
+	margin-left: 0;
+	margin-bottom: .5em;
 
 	/* stroke each browser so that they wrap lines in the pre tag */
 	white-space: pre-wrap;       /* css-3 */
@@ -90,12 +90,11 @@ pre {
 
 	background: #ffffcc;
 	border: 1px dashed gray;
-	padding: .2em;
+	padding: .3em .2em .2em .6em;
 }
 
 code {
 	font-family: Menlo, Courier, monospace;
-	font-size: 11px;
 }
 
 table {
@@ -124,7 +123,6 @@ table {
 
 textarea {
 	font-family: Menlo, Courier, monospace;
-	font-size: 11px;
 	width: 75%;
 	background-color: #ffffee;
 }
@@ -185,13 +183,16 @@ input#gitmsg
 	background-color: #222222;
 	background: -webkit-gradient(linear, left top, left bottom, from(#555555), to(#000000));
 	color: #ffffff;
-	font-size: 18px;
-	font-weight: bold;
 	padding: 4px 4px 4px 1em;
 }
 
+.titlebar span.title {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
 .titledate {
-	font-size: 10px;
+	font-size: 0.90em;
 	color: #999999;
 	margin-left: 1em;
 	margin-right: 1em;
@@ -201,11 +202,10 @@ input#gitmsg
 	background-color: #777777;
 	background: -webkit-gradient(linear, left top, left bottom, from(#666666), to(#444444));
 	padding: 4px 4px 4px 1em;
-	font-size: 1em;
 }
 
 .toolbar > a, .titlebar > a {
-	font-size: 11px;
+	font-size: 0.90em;
 	margin-right: 1em;
 	color: #eeeeee;
 	text-decoration: none;
@@ -230,12 +230,8 @@ input#gitmsg
 	}
   }
 
-input {
-	font-size: 1em;
-}
-
 input.search {
-	font-size: 11px;
+	font-size: 0.95em;
 	color: #000000;
 	width: 10em;
 	padding: .1em;
