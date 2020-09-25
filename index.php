@@ -151,9 +151,9 @@ function sanitizeFilename($inFileName)
 	return str_replace(array('~', '/', '\\', ':'), '-', $inFileName);
 }
 
-function pageLink($page, $attributes="")
+function pageLink($page, $title, $attributes="")
 {
-	return "<a href=\"" . SELF . VIEW . "/".str_replace("%23", "#", urlencode(sanitizeFilename($page)))."\"$attributes>$page</a>";
+	return "<a href=\"" . SELF . VIEW . "/".str_replace("%23", "#", urlencode(sanitizeFilename($page)))."\"$attributes>$title</a>";
 }
 
 function checkedExecute(&$html, $cmd)
@@ -209,12 +209,15 @@ function toHTML($inText)
 	);
 	for ($i = 0; $i < count($matches[0]); $i++)
 	{
-		$linkedpage = $matches[1][$i];
-		$pagePart = explode('#', $linkedpage)[0];  // split away an eventual anchor part
-		$linkedfilename = fileNameForPage(sanitizeFilename($pagePart));
-		$exists = file_exists($linkedfilename);
-		$inText = str_replace("[[$linkedpage]]",
-			pageLink($linkedpage, ($exists? "" : " class=\"noexist\"")), $inText);
+		$fullLinkText = $matches[1][$i];
+		$linkTitleSplit = explode('|', $fullLinkText);
+		$linkedPage = $linkTitleSplit[0];    // split away an eventual link text
+		$linkText = (count($linkTitleSplit) > 1) ? $linkTitleSplit[1] : $linkedPage;
+		$pagePart = explode('#', $linkedPage)[0];  // split away an eventual anchor part
+		$linkedFilename = fileNameForPage(sanitizeFilename($pagePart));
+		$exists = file_exists($linkedFilename);
+		$inText = str_replace("[[$fullLinkText]]",
+			pageLink($linkedPage, $linkText, ($exists? "" : " class=\"noexist\"")), $inText);
 	}
 	$inText = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $inText);
 	// email links - shouldn't this be "mailto" ?
@@ -368,7 +371,7 @@ if ( $action == "edit" || $action == "new" )
 			{
 				if (levenshtein(strtoupper($newPage), strtoupper($pageName)) < sqrt(min(strlen($newPage), strlen($pageName))) )
 				{
-					$html .= "<br/><strong>Note:</strong> Found similar page ".pageLink($pageName).". Maybe you meant to edit this instead?";
+					$html .= "<br/><strong>Note:</strong> Found similar page ".pageLink($pageName, $pageName).". Maybe you meant to edit this instead?";
 				}
 			}
 			$html .= "</div>\n";
@@ -555,7 +558,7 @@ else if ( $action == "all" )
 	foreach ($filelist as $pageName => $pageDate)
 	{
 		$html .= "<tr>".
-			"<td>".pageLink($pageName)."</td>".
+			"<td>".pageLink($pageName, $pageName)."</td>".
 			"<td valign=\"top\"><nobr>".date( $date_format, $pageDate)."</nobr></td>".
 			"<td>".getPageActions($pageName, $action)."</td>".
 			"</tr>\n";
@@ -583,14 +586,14 @@ else if ( $action == "search" )
 			if ( preg_match("/{$q}/i", $text) || preg_match("/{$q}/i", $searchPage) )
 			{
 				++$matches;
-				$link = pageLink($searchPage, ($searchPage === $q)? " class=\"literalMatch\"": "");
+				$link = pageLink($searchPage, $searchPage, ($searchPage === $q)? " class=\"literalMatch\"": "");
 				$html .= "        <li>$link</li>\n";
 			}
 		}
 	}
 	if (!$found)
 	{
-		$html .= "        <li><a class=\"noexist\" href=\"".SELF.VIEW."?action=view&page=$q\">".__('Create page')." '$q'</a></li>";
+		$html .= "        <li>".pageLink($q, __('Create page')." '$q'", " class=\"noexist\"")."</li>";
 	}
 	$html .= "      </ul>\n";
 	$html .= "      <p>$matches matched</p>\n";
