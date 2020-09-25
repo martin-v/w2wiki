@@ -503,6 +503,25 @@ following lines will produce a horizontal rule:
 
 <h3 id="link">Links</h3>
 
+First off, in addition to traditional link syntax, this wiki
+supports additional styles to link to wiki pages:
+
+     Use [[Home]] to link to the Home page.
+
+Will produce:
+
+     <p>Use <a href="/index.php/Home>Home</a> to link to the Home
+     page.</p>
+
+You can specify a link title by separating it from the page name via
+the '|' character, like so:
+
+     Another link to the [[Home|Home page]].
+
+Will produce:
+
+     <p>Another link to the <a href="/index.php/Home>Home page</a>.</p>
+
 Markdown supports two style of links: *inline* and *reference*.
 
 In both styles, the link text is delimited by [square brackets].
@@ -756,6 +775,10 @@ to produce:
 
 
 <h3 id="img">Images</h3>
+
+There is a syntax specific to this wiki, to link to uploaded images;
+
+    {{image.png}} will show the image.png in the image folder
 
 Admittedly, it's fairly difficult to devise a "natural" syntax for
 placing images into a plain text document format.
