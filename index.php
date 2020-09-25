@@ -251,7 +251,7 @@ function destroy_session()
 	unset($_SESSION);
 }
 
-function getPageActions($page)
+function getPageActions($page, $action)
 {
 	$pageActions = array('edit', 'delete', 'rename');
 	$pageActionNames = array(__('Edit'), __('Delete'), __('Rename'));
@@ -557,7 +557,7 @@ else if ( $action == "all" )
 		$html .= "<tr>".
 			"<td>".pageLink($pageName)."</td>".
 			"<td valign=\"top\"><nobr>".date( $date_format, $pageDate)."</nobr></td>".
-			"<td>".getPageActions($pageName)."</td>".
+			"<td>".getPageActions($pageName, $action)."</td>".
 			"</tr>\n";
 	}
 	$html .= "</tbody></table>\n";
@@ -641,7 +641,7 @@ printHeader($title);
 print "    <div class=\"titlebar\">$title <span style=\"font-weight: normal;\">$datetime</span>";
 if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action == 'save' || $action === 'edit' || $action === 'renamed')
 {
-	print(getPageActions($page));
+	print(getPageActions($page, $action));
 }
 print "    </div>\n";
 print "    <div class=\"toolbar\">\n";
