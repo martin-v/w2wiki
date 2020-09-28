@@ -518,7 +518,8 @@ else if ( $action === 'renamed' || $action === 'deleted')
 	$html .= "</div>\n";
 	if ($action === 'renamed')
 	{
-		$text = file_get_contents(fileNameForPage($page));
+		$filename = fileNameForPage($page);
+		$text = file_get_contents($filename);
 		$html .= toHTML($text);
 	}
 }
