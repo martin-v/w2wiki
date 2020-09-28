@@ -516,12 +516,15 @@ else if ( $action === 'renamed' || $action === 'deleted')
 		$page = $oldPageName;
 	}
 	$html .= "</div>\n";
-	if ($action === 'renamed')
+	if ($action === 'deleted' && $success)
 	{
-		$filename = fileNameForPage($page);
-		$text = file_get_contents($filename);
-		$html .= toHTML($text);
+		$page  = DEFAULT_PAGE;
 	}
+	// TODO: unify this with the "normal" view action page path
+	$filename = fileNameForPage($page);
+	$action = 'view';
+	$text = file_get_contents($filename);
+	$html .= toHTML($text);
 }
 else if ( $action == "all" )
 {
