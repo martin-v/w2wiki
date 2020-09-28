@@ -492,8 +492,9 @@ else if ( $action === 'renamed' || $action === 'deleted')
 		{
 			$content = file_get_contents(fileNameForPage($replacePage));
 			$count = 0;
-			$newContent = str_replace("[[$oldPageName]]",
-				(($action === "deleted") ? "" : "[[$newPageName]]"), $content, $count);
+			$newContent = preg_replace("/\[\[$oldPageName([|#].*|\]\]|\]\])/",
+				(($action === "deleted") ? "" : "[[$newPageName\\1"),
+				$content, -1, $count);
 			if ($count > 0) // if something changed
 			{
 				$changedPages[] = $replacePage." ($count ".__('matches').")";
