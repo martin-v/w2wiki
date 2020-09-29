@@ -168,7 +168,7 @@ input#gitmsg
 .note {
 	background-color: #ffffcc;
 	padding: 4px;
-	margin: 0;
+	margin: .5em 0 .5em 0;
 	color: #666644;
 	border: solid 1px #666644;
 	width: 75%;
