@@ -148,7 +148,7 @@ function fileNameForPage($page)
 
 function sanitizeFilename($inFileName)
 {
-	return str_replace(array('~', '/', '\\', ':'), '-', $inFileName);
+	return str_replace(array('~', '/', '\\', ':', '|', '&'), '-', $inFileName);
 }
 
 function pageLink($page, $title, $attributes="")
@@ -310,6 +310,11 @@ if ( $action == "save" )
 {
 	$newText = $_REQUEST['newText'];
 	$isNew = $_REQUEST['isNew'];
+	if ($isNew)
+	{
+		$page = str_replace(array('|','#'), '', $page);
+		$filename = fileNameForPage($page);
+	}
 	if ($isNew && file_exists($filename))
 	{
 		$html .= "<div class=\"note\">Error creating page '$page' - it already exists! Please choose a different name, or <a href=\"?action=edit&amp;page=".urlencode($page)."\">edit</a> the existing page (this discards current text!)!</div>\n";
@@ -376,7 +381,8 @@ if ( $action == "edit" || $action == "new" )
 			}
 			$html .= "</div>\n";
 		}
-		$html .= "<p>" . __('Title') . ": <input id=\"title\" type=\"text\" name=\"page\" value=\"$newPage\" class=\"pagename\" /></p>\n";
+		$html .= "<p>" . __('Title') . ": <input id=\"title\" title=\"Character restrictions: '#' and '|' have a special meaning in page links, they will therefore be removed; also, characters '~', '/', '\\', ':', '|', '&' might cause trouble in filenames and are therefore replaced by '-'.\" type=\"text\" name=\"page\" value=\"$newPage\" class=\"pagename\" placeholder=\"Name of new page (restrictions in tip)\"/></p>\n";
+
 	}
 
 	$html .= "<p><textarea id=\"text\" name=\"newText\" rows=\"" . EDIT_ROWS . "\">$text</textarea></p>\n";
