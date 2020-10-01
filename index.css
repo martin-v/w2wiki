@@ -88,13 +88,15 @@ pre {
 	white-space: -o-pre-wrap;    /* Opera 7 */
 	word-wrap: break-word;       /* Internet Explorer 5.5+ */
 
-	background: #ffffcc;
+	background: #ffc;
 	border: 1px dashed gray;
-	padding: .3em .2em .2em .6em;
+	padding: .2em 0 0 .4em;
 }
 
 code {
 	font-family: Menlo, Courier, monospace;
+	background: #ffc;
+	padding: .1em .1em 0 .2em;
 }
 
 table {
