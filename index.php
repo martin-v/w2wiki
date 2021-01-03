@@ -162,6 +162,14 @@ function pageLink($page, $title, $attributes="")
 	return "<a href=\"" . pageURL($page) ."\"$attributes>$title</a>";
 }
 
+function redirectWithMessage($page, $msg)
+{
+	$_SESSION["msg"] = $msg;
+	header("HTTP/1.1 303 See Other");
+	header("Location: " . pageURL($page) );
+	exit;
+}
+
 function checkedExecute(&$msg, $cmd)
 {
 	$returnValue = 0;
@@ -359,10 +367,7 @@ if ( $action == "save" )
 			gitChangeHandler($commitmsg, $msg);
 		}
 	}
-	$_SESSION["msg"] = $msg;
-	header("HTTP/1.1 303 See Other");
-	header("Location: " . pageURL($page) );
-	exit;
+	redirectWithMessage($page, $msg);
 }
 
 if ( $action == "edit" || $action == "new" )
@@ -439,7 +444,7 @@ else if ( $action == "uploaded" )
 	preg_match('/\.([^.]+)$/', $dstName, $matches);
 	$fileExt = isset($matches[1]) ? $matches[1] : null;
 
-	$html .= "<div class=\"note\">";
+	$msg = '';
 	if (in_array($fileType, explode(',', VALID_UPLOAD_TYPES)) &&
 		in_array($fileExt, explode(',', VALID_UPLOAD_EXTS)))
 	{
@@ -447,18 +452,18 @@ else if ( $action == "uploaded" )
 		$path = BASE_PATH . "/images/$dstName";
 		if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true )
 		{
-			$html .= "File '$dstName' uploaded";
+			$msg .= "File '$dstName' uploaded";
 		}
 		else
 		{
 			$error_code = $_FILES['userfile']['error'];
 			if ( $error_code === 0 ) {
 				// Likely a permissions issue
-				$html .= __('Upload error') .": Can't write to ".$path."<br/><br/>\n".
+				$msg .= __('Upload error') .": Can't write to ".$path."<br/><br/>\n".
 					"Check that your permissions are set correctly.";
 			} else {
 				// Give generic error message
-				$html .= __('Upload error').", error #".$error_code."<br/><br/>\n".
+				$msg .= __('Upload error').", error #".$error_code."<br/><br/>\n".
 					"Please see <a href=\"https://www.php.net/manual/en/features.file-upload.errors.php\">here</a> for more information.<br/><br/>\n".
 					"If you see this message, please <a href=\"https://github.com/codeling/w2wiki/issues\">file a bug to improve w2wiki</a>";
 			}
@@ -466,9 +471,9 @@ else if ( $action == "uploaded" )
 
 		error_reporting($errLevel);
 	} else {
-		$html .= __('Upload error: invalid file type');
+		$msg .= __('Upload error: invalid file type');
 	}
-	$html .= "</div>\n";
+	redirectWithMessage($page, $msg);
 }
 else if ( $action === 'rename' || $action === 'delete')
 {
@@ -486,7 +491,7 @@ else if ( $action === 'renamed' || $action === 'deleted')
 {
 	$oldPageName = sanitizeFilename($_REQUEST['oldPageName']);
 	$newPageName = ($action === 'deleted') ? "": sanitizeFilename($_REQUEST['newPageName']);
-	$html .= "<div class=\"note\">";
+	$msg = '';
 	if ($action === 'deleted')
 	{
 		$success = unlink(fileNameForPage($oldPageName));
@@ -499,7 +504,7 @@ else if ( $action === 'renamed' || $action === 'deleted')
 	{
 		$message = ($action === 'deleted') ? "Removed $oldPageName." :
 			"Renamed $oldPageName to $newPageName.";
-		$html .= $message;
+		$msg .= $message;
 		// Change links in all pages to point to new page
 		$pagenames = getAllPageNames();
 		$changedPages = array();
@@ -518,29 +523,24 @@ else if ( $action === 'renamed' || $action === 'deleted')
 		}
 		if (count($changedPages) > 0)
 		{
-			$html .= "<br/>\n".__('Updated links in the following pages:')."\n<ul><li>";
-			$html .= implode("</li><li>", $changedPages);
-			$html .= "</li></ul>";
+			$msg .= "<br/>\n".__('Updated links in the following pages:')."\n<ul><li>";
+			$msg .= implode("</li><li>", $changedPages);
+			$msg .= "</li></ul>";
 		}
 		$commitmsg = escapeshellarg($message);
-		gitChangeHandler($commitmsg, $html);
+		gitChangeHandler($commitmsg, $msg);
 		$page = $newPageName;
 	}
 	else
 	{
-		$html .= ($action === "deleted") ? __('Error deleting file'): __('Error renaming file');
+		$msg .= ($action === "deleted") ? __('Error deleting file'): __('Error renaming file');
 		$page = $oldPageName;
 	}
-	$html .= "</div>\n";
 	if ($action === 'deleted' && $success)
 	{
 		$page  = DEFAULT_PAGE;
 	}
-	// TODO: unify this with the "normal" view action page path
-	$filename = fileNameForPage($page);
-	$action = 'view';
-	$text = file_get_contents($filename);
-	$html .= toHTML($text);
+	redirectWithMessage($page, $msg);
 }
 else if ( $action == "all" )
 {
@@ -662,7 +662,7 @@ header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 printHeader($title);
 print "    <div class=\"titlebar\"><span class=\"title\">$title</span>$datetime";
-if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action === 'edit' || $action === 'renamed')
+if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action === 'edit')
 {
 	print(getPageActions($page, $action));
 }
