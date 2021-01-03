@@ -188,7 +188,7 @@ function gitChangeHandler($commitmsg, &$msg)
 	{
 		return;
 	}
-	if (checkedExecute($msg, "cd ".PAGES_PATH." && git add -A && git commit -m ".$commitmsg))
+	if (checkedExecute($msg, "cd ".PAGES_PATH." && git add -A && git commit -m ".escapeshellarg($commitmsg)))
 	{
 		if (!GIT_PUSH_ENABLED)
 		{
@@ -363,7 +363,7 @@ if ( $action == "save" )
 		{
 			$msg .= ($isNew ? __('Created'): __('Saved'));
 			$usermsg = $_REQUEST['gitmsg'];
-			$commitmsg = escapeshellarg($page . ($usermsg !== '' ?  (": ".$usermsg) : ($isNew ? " created" : " changed")));
+			$commitmsg = $page . ($usermsg !== '' ?  (": ".$usermsg) : ($isNew ? " created" : " changed"));
 			gitChangeHandler($commitmsg, $msg);
 		}
 	}
@@ -452,7 +452,8 @@ else if ( $action == "uploaded" )
 		$path = BASE_PATH . "/images/$dstName";
 		if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true )
 		{
-			$msg .= "File '$dstName' uploaded";
+			$msg = "File '$dstName' uploaded";
+			gitChangeHandler($msg, $msg);
 		}
 		else
 		{
@@ -468,9 +469,10 @@ else if ( $action == "uploaded" )
 					"If you see this message, please <a href=\"https://github.com/codeling/w2wiki/issues\">file a bug to improve w2wiki</a>";
 			}
 		}
-
 		error_reporting($errLevel);
-	} else {
+	}
+	else
+	{
 		$msg .= __('Upload error: invalid file type');
 	}
 	redirectWithMessage($page, $msg);
@@ -527,8 +529,7 @@ else if ( $action === 'renamed' || $action === 'deleted')
 			$msg .= implode("</li><li>", $changedPages);
 			$msg .= "</li></ul>";
 		}
-		$commitmsg = escapeshellarg($message);
-		gitChangeHandler($commitmsg, $msg);
+		gitChangeHandler($message, $msg);
 		$page = $newPageName;
 	}
 	else
