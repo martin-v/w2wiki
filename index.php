@@ -48,9 +48,10 @@ if ( REQUIRE_PASSWORD )
 {
 	ini_set('session.gc_maxlifetime', W2_SESSION_LIFETIME);
 	session_set_cookie_params(W2_SESSION_LIFETIME);
-	session_name(W2_SESSION_NAME);
-	session_start();
 }
+session_name(W2_SESSION_NAME);
+session_start();
+
 
 if ( count($allowedIPs) > 0 )
 {
@@ -151,36 +152,41 @@ function sanitizeFilename($inFileName)
 	return str_replace(array('~', '/', '\\', ':', '|', '&'), '-', $inFileName);
 }
 
-function pageLink($page, $title, $attributes="")
+function pageURL($page)
 {
-	return "<a href=\"" . SELF . VIEW . "/".str_replace("%23", "#", urlencode(sanitizeFilename($page)))."\"$attributes>$title</a>";
+	return SELF . VIEW . "/".str_replace("%23", "#", urlencode(sanitizeFilename($page)));
 }
 
-function checkedExecute(&$html, $cmd)
+function pageLink($page, $title, $attributes="")
+{
+	return "<a href=\"" . pageURL($page) ."\"$attributes>$title</a>";
+}
+
+function checkedExecute(&$msg, $cmd)
 {
 	$returnValue = 0;
 	$output = '';
 	exec($cmd, $output, $returnValue);
 	if ($returnValue != 0)
 	{
-		$html .= "<br/>Error executing command ".$cmd." (return value: ".$returnValue."): ".implode(" ", $output);
+		$msg .= "<br/>Error executing command ".$cmd." (return value: ".$returnValue."): ".implode(" ", $output);
 	}
 	return ($returnValue == 0);
 }
 
-function gitChangeHandler($commitmsg, $html)
+function gitChangeHandler($commitmsg, &$msg)
 {
 	if (!GIT_COMMIT_ENABLED)
 	{
 		return;
 	}
-	if (checkedExecute($html, "cd ".PAGES_PATH." && git add -A && git commit -m ".$commitmsg))
+	if (checkedExecute($msg, "cd ".PAGES_PATH." && git add -A && git commit -m ".$commitmsg))
 	{
 		if (!GIT_PUSH_ENABLED)
 		{
 			return;
 		}
-		checkedExecute($html, "cd ".PAGES_PATH." && git push");
+		checkedExecute($msg, "cd ".PAGES_PATH." && git push");
 	}
 }
 
@@ -223,12 +229,12 @@ function toHTML($inText)
 	// email links - shouldn't this be "mailto" ?
 	// $inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
 
-	$html = MarkdownExtra::defaultTransform($inText);
+	$outHTML = MarkdownExtra::defaultTransform($inText);
 
 	// add an anchor in all title tags (h1/2/3/4):
 	preg_match_all(
 		"/<h([1-4])>(.*?)<\/h\\1>/",
-		$html,
+		$outHTML,
 		$matches,
 		PREG_PATTERN_ORDER
 	);
@@ -237,10 +243,10 @@ function toHTML($inText)
 		$prefix = "<h".$matches[1][$i].">";
 		$caption = $matches[2][$i];
 		$suffix = substr_replace($prefix, "/", 1, 0);
-		$html = str_replace("$prefix$caption$suffix",
-			"$prefix<a id=\"".toHTMLID($caption)."\">$caption</a>$suffix", $html);
+		$outHTML = str_replace("$prefix$caption$suffix",
+			"$prefix<a id=\"".toHTMLID($caption)."\">$caption</a>$suffix", $outHTML);
 	}
-	return $html;
+	return $outHTML;
 }
 
 function destroy_session()
@@ -308,6 +314,7 @@ $oldgitmsg = "";
 $triedSave = false;
 if ( $action == "save" )
 {
+	$msg = '';
 	$newText = $_REQUEST['newText'];
 	$isNew = $_REQUEST['isNew'];
 	if ($isNew)
@@ -317,7 +324,7 @@ if ( $action == "save" )
 	}
 	if ($isNew && file_exists($filename))
 	{
-		$html .= "<div class=\"note\">Error creating page '$page' - it already exists! Please choose a different name, or <a href=\"?action=edit&amp;page=".urlencode($page)."\">edit</a> the existing page (this discards current text!)!</div>\n";
+		$msg .= "Error creating page '$page' - it already exists! Please choose a different name, or <a href=\"?action=edit&amp;page=".urlencode($page)."\">edit</a> the existing page (this discards current text!)!</div>\n";
 		$action = "new";
 		$text = $newText;
 		$newPage = $page;
@@ -334,7 +341,7 @@ if ( $action == "save" )
 		error_reporting($errLevel);
 		if ( $success === FALSE)
 		{
-			$html .= "<div class=\"note\">Error saving changes! Make sure your web server has write access to " . PAGES_PATH . "</div>\n";
+			$msg .= "Error saving changes! Make sure your web server has write access to " . PAGES_PATH . "\n";
 			$action = ($isNew ? "new" : "edit");
 			$text = $newText;
 			$newPage = $page;
@@ -346,14 +353,16 @@ if ( $action == "save" )
 		}
 		else
 		{
-			$html .= "<div class=\"note\">" . ($isNew ? __('Created'): __('Saved'));
+			$msg .= ($isNew ? __('Created'): __('Saved'));
 			$usermsg = $_REQUEST['gitmsg'];
 			$commitmsg = escapeshellarg($page . ($usermsg !== '' ?  (": ".$usermsg) : ($isNew ? " created" : " changed")));
-			gitChangeHandler($commitmsg, $html);
-			$html .=  "</div>\n";
-			$html .= toHTML($newText);
+			gitChangeHandler($commitmsg, $msg);
 		}
 	}
+	$_SESSION["msg"] = $msg;
+	header("HTTP/1.1 303 See Other");
+	header("Location: " . pageURL($page) );
+	exit;
 }
 
 if ( $action == "edit" || $action == "new" )
@@ -653,7 +662,7 @@ header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 printHeader($title);
 print "    <div class=\"titlebar\"><span class=\"title\">$title</span>$datetime";
-if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action == 'save' || $action === 'edit' || $action === 'renamed')
+if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action === 'edit' || $action === 'renamed')
 {
 	print(getPageActions($page, $action));
 }
@@ -689,6 +698,11 @@ if (SIDEBAR_PAGE != '')
 	print "    </div>\n";
 }
 print "    <div class=\"main\">\n\n";
+if(isset($_SESSION['msg']) && $_SESSION['msg'] != '')
+{
+	print "      <div class=\"note\">".$_SESSION['msg']."</div>";
+	unset($_SESSION['msg']);
+}
 print "$html\n";
 print "    </div>\n";
 printFooter();
