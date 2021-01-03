@@ -6,7 +6,7 @@ W2 wiki is a web-based, wiki-like notepad that you can host yourself.
 ## Notable features:
 
 - Elegant text markup:
-    - Uses [Markdown Syntax](https://github.com/codeling/w2wiki/blob/master/pages/Markdown Syntax.md).
+    - Uses [Markdown Syntax](https://github.com/codeling/w2wiki/blob/master/pages/MarkdownSyntax.md).
     - It supports double-brackets [[like this]] to link to another page in the wiki by title
     - It supports double-braces {{like this}} to link to an uploaded image
 - Minimalistic but functional interface:
@@ -44,7 +44,7 @@ Originally written by [Steven Frank](https://github.com/panicsteve/w2wiki) and o
 
 W2 wiki uses [PHP Markdown](https://github.com/michelf/php-markdown) by Michel Fortin for rendering Markdown to HTML.
 
-The [Markdown syntax](https://github.com/codeling/w2wiki/blob/master/pages/Markdown Syntax.md) description is taken from [daringfireball.net](https://daringfireball.net/projects/markdown/syntax).
+The [Markdown syntax](https://github.com/codeling/w2wiki/blob/master/pages/MarkdownSyntax.md) description is taken from [daringfireball.net](https://daringfireball.net/projects/markdown/syntax).
 
 Maintainer of this fork is [codeling](https://github.com/codeling/w2wiki).
 
