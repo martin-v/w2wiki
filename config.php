@@ -111,6 +111,8 @@ define('VALID_UPLOAD_EXTS', 'jpg,jpeg,png,gif,pdf,zip,dmg');
 // The format to use when displaying page modification times.
 // See the manual for the PHP 'date()' function for the specification:
 // http://php.net/manual/en/function.date.php
+// Note that these settings are overridden by the
+// date_format/date_format_no_time in the used locale!
 
 define('TITLE_DATE', 'j-M-Y g:i A');
 define('TITLE_DATE_NO_TIME', 'j-M-Y');
