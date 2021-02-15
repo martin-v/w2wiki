@@ -449,7 +449,7 @@ else if ( $action == "uploaded" )
 		in_array($fileExt, explode(',', VALID_UPLOAD_EXTS)))
 	{
 		$errLevel = error_reporting(0);
-		$path = BASE_PATH . "/images/$dstName";
+		$path = PAGES_PATH . "/". UPLOAD_FOLDER . "/$dstName";
 		if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true )
 		{
 			$msg = "File '$dstName' uploaded";

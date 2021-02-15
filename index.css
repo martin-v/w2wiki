@@ -73,7 +73,7 @@ ol {
 }
 
 p {
-	margin-bottom: .5em;
+	margin-top: .5em;
 }
 
 pre {
@@ -233,7 +233,7 @@ input#gitmsg
   }
 
 input.search {
-	font-size: 0.95em;
+/*	font-size: 0.95em;*/
 	color: #000000;
 	width: 10em;
 	padding: .1em;

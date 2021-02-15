@@ -14,19 +14,17 @@
 // Site layout settings
 // --------------------
 
-// BASE_PATH
-//
-// The base system path to W2.  You only need to change this if we guess wrong.
-// You should not use a trailing slash.
-
-define('BASE_PATH', getcwd());
-
 // PAGES_PATH
 //
 // The path to the raw text documents maintained by W2
 // You should not use a trailing slash.
 
 define('PAGES_PATH', BASE_PATH . '/pages');
+
+// UPLOAD_FOLDER
+//
+// The subfolder in PAGES_PATH that uploads get stored to
+define('UPLOAD_FOLDER', 'images');
 
 // PAGES_EXT
 //
