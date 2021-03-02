@@ -461,6 +461,7 @@ else if ( $action == "uploaded" )
 		die('Invalid access. Uploads are disabled in the configuration.');
 	}
 	$dstName = sanitizeFilename($_FILES['userfile']['name']);
+	$dstName = str_replace(" ", "_", $dstName);  // image display currently doesn't like spaces!
 	$fileType = $_FILES['userfile']['type'];
 	preg_match('/\.([^.]+)$/', $dstName, $matches);
 	$fileExt = isset($matches[1]) ? $matches[1] : null;
@@ -473,8 +474,9 @@ else if ( $action == "uploaded" )
 		$path = PAGES_PATH . "/". UPLOAD_FOLDER . "/$dstName";
 		if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true )
 		{
-			$msg = "File '$dstName' uploaded";
+			$msg  = "File '$dstName' uploaded";
 			gitChangeHandler($msg, $msg);
+			$msg .= " successfully! Use <pre>![Your Image Description](/".UPLOAD_FOLDER."/$dstName)</pre> to refer to it!";
 		}
 		else
 		{
