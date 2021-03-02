@@ -432,6 +432,27 @@ else if ( $action == "upload" )
 		$html .= '<input id="cancel" type="button" onclick="history.go(-1);" value="'. __('Cancel') .'" />'."\n";
 		$html .= "</p></form>\n";
 	}
+	// list files in UPLOAD_FOLDER
+	$path = PAGES_PATH . "/". UPLOAD_FOLDER . "/*";
+	$imgNames = glob($path);
+	natcasesort($imgNames);
+	$html .= "<p>".__('Total').": ".count($imgNames)." images</p>";
+	$html .= "<table><thead>";
+	$html .= "<tr>".
+/*
+		"<td>".(($sortBy!='name')?("<a href=\"".SELF."?action=all&sortBy=name\">Name</a>"):"<span class=\"sortBy\">Name</span>")."</td>".
+		"<td>".(($sortBy!='recent')?("<a href=\"".SELF."?action=all&sortBy=recent\">Modified</a>"):"<span class=\"sortBy\">Modified</span>")."</td>".
+ */		"<td>".__("Name")."</td><td>".__("Modified")."</td>".
+		"</tr></thead><tbody>";
+	$date_format = __('date_format', TITLE_DATE);
+	foreach ($imgNames as $imgName)
+	{
+		$html .= "<tr>".
+			"<td>".basename($imgName)."</td>".
+			"<td valign=\"top\"><nobr>".date($date_format, filemtime($imgName))."</nobr></td>".
+			"</tr>\n";
+	}
+	$html .= "</tbody></table>\n";
 }
 else if ( $action == "uploaded" )
 {
