@@ -447,7 +447,7 @@ else if ( $action == "upload" )
 /*
 		"<td>".(($sortBy!='name')?("<a href=\"".SELF."?action=all&sortBy=name\">Name</a>"):"<span class=\"sortBy\">Name</span>")."</td>".
 		"<td>".(($sortBy!='recent')?("<a href=\"".SELF."?action=all&sortBy=recent\">Modified</a>"):"<span class=\"sortBy\">Modified</span>")."</td>".
- */		"<td>".__("Name")."</td><td>".__("Usage")."</td><td>".__("Modified")."</td>".
+ */		"<td>".__("Name")."</td><td>".__("Usage")."</td><td>".__("Modified")."</td><td>".__("Action")."</td>".
 		"</tr></thead><tbody>";
 	$date_format = __('date_format', TITLE_DATE);
 	foreach ($imgNames as $imgName)
@@ -456,6 +456,7 @@ else if ( $action == "upload" )
 			"<td>".basename($imgName)."</td>".
 			"<td><pre>".imageLinkText(basename($imgName))."</pre></td>".
 			"<td valign=\"top\"><nobr>".date($date_format, filemtime($imgName))."</nobr></td>".
+			"<td><a href=\"".SELF."?action=imgDelete"."&amp;imgName=".urlencode(basename($imgName))."\">".__('Delete')."</a></td>".
 			"</tr>\n";
 	}
 	$html .= "</tbody></table>\n";
@@ -506,9 +507,13 @@ else if ( $action == "uploaded" )
 	}
 	redirectWithMessage($page, $msg);
 }
-else if ( $action === 'rename' || $action === 'delete')
+else if ( $action === 'rename' || $action === 'delete' || $action === 'imgDelete')
 {
-	$actionName = ($action === 'delete')?__('Delete'):__('Rename');
+	if ($action === 'imgDelete')
+	{
+		$page = urldecode(@$_REQUEST['imgName']);
+	}
+	$actionName = ($action === 'delete' || $action === 'imgDelete')?__('Delete'):__('Rename');
 	$html .= "<form id=\"$action\" method=\"post\" action=\"" . SELF . "\">";
 	$html .= "<p>".$actionName." $page ".
 		(($action==='rename')? (__('to')." <input id=\"newPageName\" type=\"text\" name=\"newPageName\" value=\"" . htmlspecialchars($page) . "\" class=\"pagename\" />") : "?") . "</p>";
@@ -520,6 +525,7 @@ else if ( $action === 'rename' || $action === 'delete')
 }
 else if ( $action === 'renamed' || $action === 'deleted')
 {
+	// TODO: prevent relative filenames from being injected
 	$oldPageName = sanitizeFilename($_REQUEST['oldPageName']);
 	$newPageName = ($action === 'deleted') ? "": sanitizeFilename($_REQUEST['newPageName']);
 	$msg = '';
@@ -572,7 +578,26 @@ else if ( $action === 'renamed' || $action === 'deleted')
 	}
 	redirectWithMessage($page, $msg);
 }
-else if ( $action == "all" )
+else if ( $action === "imgDeleted")
+{
+	// TODO: prevent relative filenames from being injected
+	$oldPageName = sanitizeFilename($_REQUEST['oldPageName']);
+	$imgPath = PAGES_PATH . "/". UPLOAD_FOLDER . "/". $oldPageName;
+	$success = unlink($imgPath);
+	if ($success)
+	{	
+		$msg = __('Image deleted');
+		gitChangeHandler($msg, $msg);
+		$msg .= " (".$imgPath.")";
+	}
+	else
+	{
+		$msg = __('Error deleting image');
+		$msg .= " (".$imgPath.")";
+	}
+	redirectWithMessage(DEFAULT_PAGE, $msg);
+}
+else if ( $action === "all" )
 {
 	$pageNames = getAllPageNames();
 	$filelist = array();
@@ -600,8 +625,9 @@ else if ( $action == "all" )
 	$html .= "<p>".__('Total').": ".count($pageNames)." pages</p>";
 	$html .= "<table><thead>";
 	$html .= "<tr>".
-		"<td>".(($sortBy!='name')?("<a href=\"".SELF."?action=all&sortBy=name\">Name</a>"):"<span class=\"sortBy\">Name</span>")."</td>".
-		"<td>".(($sortBy!='recent')?("<a href=\"".SELF."?action=all&sortBy=recent\">Modified</a>"):"<span class=\"sortBy\">Modified</span>")."</td>".
+		"<td>".(($sortBy!='name')?("<a href=\"".SELF."?action=all&sortBy=name\">Name</a>"):"<span class=\"sortBy\">".__('Name')."</span>")."</td>".
+		"<td>".(($sortBy!='recent')?("<a href=\"".SELF."?action=all&sortBy=recent\">".__('Modified')."</a>"):"<span class=\"sortBy\">".__('Modified')."</span>")."</td>".
+		"<td>".__('Action')."</td>".
 		"</tr></thead><tbody>";
 	$date_format = __('date_format', TITLE_DATE);
 
