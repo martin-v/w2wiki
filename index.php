@@ -147,6 +147,11 @@ function fileNameForPage($page)
 	return PAGES_PATH . "/$page." . PAGES_EXT;
 }
 
+function imageLinkText($imgName)
+{
+	return "![".__("Image Description")."](/".UPLOAD_FOLDER."/$imgName)";
+}
+
 function sanitizeFilename($inFileName)
 {
 	return str_replace(array('~', '/', '\\', ':', '|', '&'), '-', $inFileName);
@@ -395,7 +400,7 @@ if ( $action == "edit" || $action == "new" )
 			}
 			$html .= "</div>\n";
 		}
-		$html .= "<p>" . __('Title') . ": <input id=\"title\" title=\"Character restrictions: '#' and '|' have a special meaning in page links, they will therefore be removed; also, characters '~', '/', '\\', ':', '|', '&' might cause trouble in filenames and are therefore replaced by '-'.\" type=\"text\" name=\"page\" value=\"$newPage\" class=\"pagename\" placeholder=\"Name of new page (restrictions in tip)\"/></p>\n";
+		$html .= "<p>" . __('Title') . ": <input id=\"title\" title=\"".__("Character restrictions: '#' and '|' have a special meaning in page links, they will therefore be removed; also, characters '~', '/', '\\', ':', '|', '&' might cause trouble in filenames and are therefore replaced by '-'.")."\" type=\"text\" name=\"page\" value=\"$newPage\" class=\"pagename\" placeholder=\"".__('Name of new page (restrictions in tip)')."\"/></p>\n";
 
 	}
 
@@ -436,19 +441,20 @@ else if ( $action == "upload" )
 	$path = PAGES_PATH . "/". UPLOAD_FOLDER . "/*";
 	$imgNames = glob($path);
 	natcasesort($imgNames);
-	$html .= "<p>".__('Total').": ".count($imgNames)." images</p>";
+	$html .= "<p>".__('Total').": ".count($imgNames)." ".__('images')."</p>";
 	$html .= "<table><thead>";
 	$html .= "<tr>".
 /*
 		"<td>".(($sortBy!='name')?("<a href=\"".SELF."?action=all&sortBy=name\">Name</a>"):"<span class=\"sortBy\">Name</span>")."</td>".
 		"<td>".(($sortBy!='recent')?("<a href=\"".SELF."?action=all&sortBy=recent\">Modified</a>"):"<span class=\"sortBy\">Modified</span>")."</td>".
- */		"<td>".__("Name")."</td><td>".__("Modified")."</td>".
+ */		"<td>".__("Name")."</td><td>".__("Usage")."</td><td>".__("Modified")."</td>".
 		"</tr></thead><tbody>";
 	$date_format = __('date_format', TITLE_DATE);
 	foreach ($imgNames as $imgName)
 	{
 		$html .= "<tr>".
 			"<td>".basename($imgName)."</td>".
+			"<td><pre>".imageLinkText(basename($imgName))."</pre></td>".
 			"<td valign=\"top\"><nobr>".date($date_format, filemtime($imgName))."</nobr></td>".
 			"</tr>\n";
 	}
@@ -476,7 +482,7 @@ else if ( $action == "uploaded" )
 		{
 			$msg  = "File '$dstName' uploaded";
 			gitChangeHandler($msg, $msg);
-			$msg .= " successfully! Use <pre>![Your Image Description](/".UPLOAD_FOLDER."/$dstName)</pre> to refer to it!";
+			$msg .= " successfully! Use <pre>".imageLinkText($dstName)."</pre> to refer to it!";
 		}
 		else
 		{
@@ -640,7 +646,7 @@ else if ( $action == "search" )
 		$html .= "        <li>".pageLink($q, __('Create page')." '$q'", " class=\"noexist\"")."</li>";
 	}
 	$html .= "      </ul>\n";
-	$html .= "      <p>$matches matched</p>\n";
+	$html .= "      <p>$matches ".__('matches')."</p>\n";
 }
 else
 {
