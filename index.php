@@ -430,12 +430,16 @@ else if ( $action == "upload" )
 	}
 	else
 	{
-		$html .= "<form id=\"upload\" method=\"post\" action=\"" . SELF . "\" enctype=\"multipart/form-data\"><p>\n";
-		$html .= "<input type=\"hidden\" name=\"action\" value=\"uploaded\" />";
-		$html .= "<input id=\"file\" type=\"file\" name=\"userfile\" />\n";
-		$html .= '<input id="upload" type="submit" value="' . __('Upload') . '" />'."\n";
-		$html .= '<input id="cancel" type="button" onclick="history.go(-1);" value="'. __('Cancel') .'" />'."\n";
-		$html .= "</p></form>\n";
+		$html .= "<form id=\"upload\" method=\"post\" action=\"" . SELF . "\" enctype=\"multipart/form-data\"><p>\n".
+			"<input type=\"hidden\" name=\"action\" value=\"uploaded\" />".
+			"<input id=\"file\" type=\"file\" name=\"userfile\" />\n".
+			'<input id="resize" type="checkbox" checked="checked" name="resize" value="true">'.
+			'<label for="resize">'.__('Shrink if larger than ').'</label>'.
+			'<input id="maxsize" type="number" name="maxsize" min="20" max="8192" value="1200">'.
+			'<label for="maxsize" id="maxsizelabel">'.__('Pixels').'</label>'.
+			'<input id="upload" type="submit" value="' . __('Upload') . '" />'."\n".
+			'<input id="cancel" type="button" onclick="history.go(-1);" value="'. __('Cancel') .'" />'."\n";
+			"</p></form>\n";
 	}
 	// list files in UPLOAD_FOLDER
 	$path = PAGES_PATH . "/". UPLOAD_FOLDER . "/*";
@@ -455,7 +459,7 @@ else if ( $action == "upload" )
 		$html .= "<tr>".
 			"<td>".basename($imgName)."</td>".
 			"<td><pre>".imageLinkText(basename($imgName))."</pre></td>".
-			"<td valign=\"top\"><nobr>".date($date_format, filemtime($imgName))."</nobr></td>".
+			"<td><nobr>".date($date_format, filemtime($imgName))."</nobr></td>".
 			"<td><a href=\"".SELF."?action=imgDelete"."&amp;imgName=".urlencode(basename($imgName))."\">".__('Delete')."</a></td>".
 			"</tr>\n";
 	}
@@ -472,18 +476,92 @@ else if ( $action == "uploaded" )
 	$fileType = $_FILES['userfile']['type'];
 	preg_match('/\.([^.]+)$/', $dstName, $matches);
 	$fileExt = isset($matches[1]) ? $matches[1] : null;
-
+	$imgExts = array('jpg','jpeg','png','gif');
 	$msg = '';
 	if (in_array($fileType, explode(',', VALID_UPLOAD_TYPES)) &&
-		in_array($fileExt, explode(',', VALID_UPLOAD_EXTS)))
+	    in_array($fileExt, explode(',', VALID_UPLOAD_EXTS)))
 	{
-		$errLevel = error_reporting(0);
 		$path = PAGES_PATH . "/". UPLOAD_FOLDER . "/$dstName";
+		$resize = isset($_POST['resize']) && $_POST['resize'] === 'true';
+		$doResize = $resize &&  in_array($fileExt, $imgExts);
+		if ($doResize)
+		{
+			$exif = exif_read_data($_FILES['userfile']['tmp_name']);
+			$size = getimagesize($_FILES['userfile']['tmp_name']);
+			$maxsize = intval($_POST['maxsize']);
+			$doResize = ($size[0] > $maxsize || $size[1] > $maxsize);
+			if ($doResize)
+			{
+				$msg .= "trying to resize";
+				$finalPath = $path;
+				$path = substr($path, 0, strlen($path)-strlen($fileExt)-1) . "-tmp-resize." . $fileExt;
+			}
+		}
+		$errLevel = error_reporting(0);
 		if ( move_uploaded_file($_FILES['userfile']['tmp_name'], $path) === true )
 		{
-			$msg  = "File '$dstName' uploaded";
+			$msg  = "File '$dstName' uploaded! ";
+			if ($doResize)
+			{
+				$newSize = array(0, 0);
+				$idx0 = ($size[0] > $size[1]) ? 0 : 1;
+				$idx1 = ($idx0 == 0) ? 1 : 0;
+				$newSize[$idx0] = $maxsize;
+				$newSize[$idx1] = (int)round($size[$idx1] * $maxsize / $size[$idx0]);
+				$src = imagecreatefromstring(file_get_contents($path));
+				$dst = imagecreatetruecolor($newSize[0], $newSize[1]);
+				if (!imagecopyresampled($dst, $src, 0, 0, 0, 0, $newSize[0], $newSize[1], $size[0], $size[1]))
+				{
+					$msg .= "Resizing file failed!";
+				}
+				imagedestroy( $src );
+				if(!empty($exif['Orientation']))
+				{
+					switch($exif['Orientation'])
+					{
+					case 8:
+						$msg .= "Image rotated by +90°. ";
+						$rot = imagerotate($dst,90,0);
+						break;
+					case 3:
+						$msg .= "Image rotated by 180°. ";
+						$rot = imagerotate($dst,180,0);
+						break;
+					case 6:
+						$msg .= "Image rotated by -90°. ";
+						$rot = imagerotate($dst,-90,0);
+						break;
+					default:
+						$msg .= "Unknown EXIF orientation specification: ".$exif['Orientation']."!";
+						break;
+					}
+					if ($rot === false)
+					{
+						$msg .= "Rotation failed!";
+					}
+					else
+					{
+						imagedestroy( $dst );
+						$dst = $rot;
+					}
+				}
+				if ($fileExt === 'png')
+				{
+					imagepng($dst, $finalPath);
+				}
+				else if ($fileExt === 'jpg' || $fileExt === 'jpeg')
+				{
+					imagejpeg($dst, $finalPath);
+				}
+				else if ($fileExt === 'gif')
+				{
+					imagegif($dst, $finalPath);
+				}
+				unlink($path);
+				imagedestroy( $dst );
+			}
 			gitChangeHandler($msg, $msg);
-			$msg .= " successfully! Use <pre>".imageLinkText($dstName)."</pre> to refer to it!";
+			$msg .= " ($size[0]x$size[1]".(($doResize)?", resized to $newSize[0]x$newSize[1]":"").") successfully! Use <pre>".imageLinkText($dstName)."</pre> to refer to it!";
 		}
 		else
 		{
@@ -505,7 +583,7 @@ else if ( $action == "uploaded" )
 	{
 		$msg .= __('Upload error: invalid file type');
 	}
-	redirectWithMessage($page, $msg);
+	redirectWithMessage(DEFAULT_PAGE, $msg);
 }
 else if ( $action === 'rename' || $action === 'delete' || $action === 'imgDelete')
 {

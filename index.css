@@ -260,6 +260,9 @@ input[type="submit"] {
 	cursor: pointer;
 	margin-right: .5em;
 }
+#maxsizelabel {
+	margin-right: 1em;
+}
 
 input[type="submit"] {
 	background-color: rgb(30, 101, 201);

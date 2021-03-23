@@ -37,6 +37,8 @@ $w2_word_set = array(
 	'matches' => 'Übereinstimmung(en)',
 	'Create page' => 'Seite anlegen',
 	'to' => 'in',
+	'Shrink if larger than ' => 'Verkleinern wenn größer als ',
+	'Pixels' => 'Pixel',
 	// Messages
 	'Upload error' => 'Fehler beim Hochladen',
 	'Upload error: invalid file type' => 'Fehler beim Hochladen: Dieser Dateityp ist nicht zugelassen, bitte wende Dich an deinen Administrator!',
