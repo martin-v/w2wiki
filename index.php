@@ -210,6 +210,7 @@ function toHTMLID($noid)
 
 function toHTML($inText)
 {
+	$inText = htmlentities($inText);
 	if ( AUTOLINK_PAGE_TITLES )
 	{
 		$pagenames = getAllPageNames();
