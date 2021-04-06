@@ -283,3 +283,17 @@ img {
 	max-width: 100%;
 	height: auto;
 }
+
+#drawer {
+	display: inline-block;
+	position: fixed;
+	width: 300px;
+	background-color: rgb(240, 240, 240);
+	border: 1px solid black;
+	border-radius: 5px;
+	margin-top: 1.8em;
+	padding: 4px;
+}
+.inactive {
+	display: none !important;
+}

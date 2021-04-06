@@ -85,6 +85,11 @@ function printHeader($title, $bodyclass="")
 	//print "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=false\" />\n";
 	print "    <link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
 	print "    <title>".PAGE_TITLE."$title</title>\n";
+	print "    <script>\n";
+	print "        function toggleDrawer(){\n";
+	print "            document.getElementById('drawer').classList.toggle('inactive');\n";
+	print "        }\n";
+	print "    </script>\n";
 	print "  </head>\n";
 	print "  <body".($bodyclass != "" ? " class=\"$bodyclass\"":"").">\n";
 }
@@ -93,6 +98,41 @@ function printFooter()
 {
 	print "  </body>\n";
 	print "</html>";
+}
+
+function printDrawer()
+{
+	print "<div id=\"drawer\" class=\"inactive\">".
+		"<h5>Markdown Syntax Helper</h5><br/>".
+		"# Header 1<br/>".
+		"## Header 2<br/>".
+		"### Header 3<br/>".
+		"#### Header 4<br/>".
+		"##### Header 5<br/>".
+		"###### Header 6<br/>".
+		"<br/>".
+		"**Bold** - <strong>Bold</strong><br/>".
+		"*Emphasize* - <em>Emphasize</em><br/>".
+		"<br/>".
+		"[[Link to page]]<br/>".
+		"&lt;http://example.com/&gt;<br/>".
+		"[link text](http://url)<br/><br/>".
+		"{{image.jpg}}<br/>".
+		"![Alt text](/images/image.jpg)<br/>".
+		"![Alt text](/images/image.jpg \"Optional title\")<br/>".
+		"<br/>".
+		"- Unordered list<br/>".
+		"+ Unordered list<br/>".
+		"* Unordered list<br/>".
+		"1. Ordered list<br/>".
+		"<br/>".
+		"> Blockquote<br/>".// <blockquote>Blockquotes</blockquote>\n".
+		"```Code```<br/>". //<pre>Code</pre>\n\n".
+		"`inline-code`<br/><br/>".
+		"*** Horizontal rule<br/>".
+		"--- Horizontal rule</h5><br/>".
+		"</div>".
+		"<a id=\"drawer-control\" href=\"\" onclick=\"toggleDrawer(); return false;\">Formatting help</span>\n";
 }
 
 if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
@@ -814,6 +854,7 @@ if ( REQUIRE_PASSWORD )
 }
 print "      <form method=\"post\" action=\"" . SELF . "?action=search\">\n";
 print "        <input class=\"search\" placeholder=\"". __('Search') ."\" size=\"20\" id=\"search\" type=\"text\" name=\"q\" />\n      </form>\n";
+printDrawer();
 print "    </div>\n";
 if (SIDEBAR_PAGE != '')
 {
