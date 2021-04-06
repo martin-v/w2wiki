@@ -210,7 +210,9 @@ function toHTMLID($noid)
 
 function toHTML($inText)
 {
-	$inText = htmlentities($inText);
+	$parser = new MarkdownExtra;
+	$parser->no_markup = true;
+	$outHTML  = $parser->transform($inText);
 	if ( AUTOLINK_PAGE_TITLES )
 	{
 		$pagenames = getAllPageNames();
@@ -218,12 +220,12 @@ function toHTML($inText)
 		foreach ( $pagenames as $pageName )
 		{
 			// match pageName, but only if it isn't inside another word or inside braces (as in "[$pageName]").
-			$inText = preg_replace("/(?<![\[a-zA-Z])$pageName(?![\]a-zA-Z])/i", "[[$pageName]]", $inText);
+			$outHTML = preg_replace("/(?<![\[a-zA-Z])$pageName(?![\]a-zA-Z])/i", "[[$pageName]]", $outHTML);
 		}
 	}
 	preg_match_all(
 		"/\[\[(.*?)\]\]/",
-		$inText,
+		$outHTML,
 		$matches,
 		PREG_PATTERN_ORDER
 	);
@@ -236,14 +238,10 @@ function toHTML($inText)
 		$pagePart = explode('#', $linkedPage)[0];  // split away an eventual anchor part
 		$linkedFilename = fileNameForPage(sanitizeFilename($pagePart));
 		$exists = file_exists($linkedFilename);
-		$inText = str_replace("[[$fullLinkText]]",
-			pageLink($linkedPage, $linkText, ($exists? "" : " class=\"noexist\"")), $inText);
+		$outHTML = str_replace("[[$fullLinkText]]",
+			pageLink($linkedPage, $linkText, ($exists? "" : " class=\"noexist\"")), $outHTML);
 	}
-	$inText = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $inText);
-	// email links - shouldn't this be "mailto" ?
-	// $inText = preg_replace("/message:(.*?)\s/", "[<a href=\"message:\\1\">email</a>]", $inText);
-
-	$outHTML = MarkdownExtra::defaultTransform($inText);
+	$outHTML = preg_replace("/\{\{(.*?)\}\}/", "<img src=\"" . BASE_URI . "/images/\\1\" alt=\"\\1\" />", $outHTML);
 
 	// add an anchor in all title tags (h1/2/3/4):
 	preg_match_all(
