@@ -588,7 +588,7 @@ else if ( $action === 'rename' || $action === 'delete' || $action === 'imgDelete
 {
 	if ($action === 'imgDelete')
 	{
-		$page = urldecode(@$_REQUEST['imgName']);
+		$page = sanitizeFilename(urldecode($_REQUEST['imgName']));
 	}
 	$actionName = ($action === 'delete' || $action === 'imgDelete')?__('Delete'):__('Rename');
 	$html .= "<form id=\"$action\" method=\"post\" action=\"" . SELF . "\">";
@@ -603,8 +603,8 @@ else if ( $action === 'rename' || $action === 'delete' || $action === 'imgDelete
 else if ( $action === 'renamed' || $action === 'deleted')
 {
 	// TODO: prevent relative filenames from being injected
-	$oldPageName = sanitizeFilename($_REQUEST['oldPageName']);
-	$newPageName = ($action === 'deleted') ? "": sanitizeFilename($_REQUEST['newPageName']);
+	$oldPageName = sanitizeFilename($_POST['oldPageName']);
+	$newPageName = ($action === 'deleted') ? "": sanitizeFilename($_POST['newPageName']);
 	$msg = '';
 	if ($action === 'deleted')
 	{
