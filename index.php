@@ -82,7 +82,7 @@ function printHeader($title, $bodyclass="")
 	print "    <meta charset=\"" . W2_CHARSET . "\">\n";
 	print "    <link rel=\"apple-touch-icon\" href=\"w2-icon.png\"/>\n";
 	print "    <link rel=\"icon\" href=\"w2-icon.png\"/>\n";
-	//print "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=false\" />\n";
+	print "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n";
 	print "    <link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
 	print "    <title>".PAGE_TITLE."$title</title>\n";
 	print "    <script>\n";
@@ -134,7 +134,7 @@ function printDrawer()
 		"*** Horizontal rule<br/>".
 		"--- Horizontal rule</h5><br/>".
 		"</div>".
-		"<a id=\"drawer-control\" href=\"\" onclick=\"toggleDrawer(); return false;\">".__('Formatting help')."</span>\n";
+		"<a id=\"drawer-control\" href=\"\" onclick=\"toggleDrawer(); return false;\"><img src=\"/format-text-bold.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/format-text-italic.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/format-text-code.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/></span>\n";
 }
 
 if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
@@ -324,9 +324,10 @@ function getPageActions($page, $action)
 		if ($action != $pageActions[$i])
 		{
 			$result .= "      <a href=\"".SELF."?action=".$pageActions[$i].
-				"&amp;page=".urlencode($page)."\">".$pageActionNames[$i]."</a>\n";
+				"&amp;page=".urlencode($page)."\"><img src=\"/".$pageActions[$i].".svg\" alt=\"".$pageActionNames[$i]."\" title=\"".$pageActionNames[$i]."\" class=\"icon\"></a>\n";
 		}
 	}
+		$result .= "      <a href=\"" . SELF . "?action=view&page=$page&linkshere=true\"><img src=\"/link.svg\" alt=\"".__('Show links here')."\" title=\"".__('Show links here')."\" class=\"icon\"/></a>\n";
 	return $result;
 }
 
@@ -755,7 +756,7 @@ else if ( $action === "all" )
 		$html .= "<tr>".
 			"<td>".pageLink($pageName, $pageName)."</td>".
 			"<td valign=\"top\"><nobr>".date( $date_format, $pageDate)."</nobr></td>".
-			"<td>".getPageActions($pageName, $action)."</td>".
+			"<td class=\"pageActions\">".getPageActions($pageName, $action)."</td>".
 			"</tr>\n";
 	}
 	$html .= "</tbody></table>\n";
@@ -843,12 +844,12 @@ if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action 
 }
 print "    </div>\n";
 print "    <div class=\"toolbar\">\n";
-print "      <a href=\"" . SELF . "\">". __(DEFAULT_PAGE) . "</a>\n";
-print "      <a href=\"" . SELF . "?action=all\">". __('All') ."</a>\n";
-print "      <a href=\"" . SELF . "?action=new\">". __('New') ."</a>\n";
+print "      <a href=\"" . SELF . "\"><img src=\"/home.svg\" alt=\"". __(DEFAULT_PAGE) . "\" title=\"". __(DEFAULT_PAGE) . "\" class=\"icon\"></a>\n";
+print "      <a href=\"" . SELF . "?action=all\"><img src=\"/list.svg\" alt=\"". __('All') . "\" title=\"". __('All') . "\" class=\"icon\"></a>\n";
+print "      <a href=\"" . SELF . "?action=new\"><img src=\"/new.svg\" alt=\"".__('New')."\" title=\"".__('New')."\" class=\"icon\"></a>\n";
 if ( !DISABLE_UPLOADS )
 {
-	print "      <a href=\"" . SELF . VIEW . "?action=upload\">". __('Upload') ."</a>\n";
+	print "      <a href=\"" . SELF . VIEW . "?action=upload\"><img src=\"/upload.svg\" alt=\"".__('Upload')."\" title=\"".__('Upload')."\" class=\"icon\"/></a>\n";
 }
 if ( REQUIRE_PASSWORD )
 {
@@ -876,9 +877,9 @@ if (SIDEBAR_PAGE != '')
 	print toHTML($text);
 	print "    </div>\n";
 }
-if ($action === 'view' && $_GET['linkhere'])
+if ($action === 'view' && $_GET['linkshere'])
 {
-	print "<div class=\"linkhere\">What links here: <ul>";
+	print "<div class=\"linkshere\">".__('What links here:')."<ul>";
 	$pagenames = getAllPageNames();
 	foreach($pagenames as $searchPage)
 	{

@@ -43,6 +43,7 @@ $w2_word_set = array(
 	'to' => 'in',
 	'Shrink if larger than ' => 'Verkleinern wenn größer als ',
 	'Pixels' => 'Pixel',
+	'What links here:' => 'Seiten die hierher linken:',
 	// Messages
 	'Upload error' => 'Fehler beim Hochladen',
 	'Upload error: invalid file type' => 'Fehler beim Hochladen: Dieser Dateityp ist nicht zugelassen, bitte wende Dich an deinen Administrator!',

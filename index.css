@@ -132,6 +132,16 @@ table {
   tr:nth-child(odd) {
 	background: #eeeeee;
   }
+.pageActions {
+	padding-left: 8px;
+	padding-right: 8px;
+}
+  tr:nth-child(even) .pageActions {
+	background-color: rgb(80, 80, 80);
+  }
+  tr:nth-child(odd) .pageActions {
+	background-color: rgb(40, 40, 40);
+  }
 
 textarea {
 	font-family: Courier, monospace;
@@ -231,7 +241,7 @@ input#gitmsg
 .sidebar {
 	float: right;
 }
-.sidebar, .linkhere {
+.sidebar, .linkshere {
 	margin-right: 5px;
 	margin-top: 5px;
 	padding: 4px;
@@ -241,12 +251,12 @@ input#gitmsg
 	margin-top: 0;
 	margin-left: 4px;
 }
-.linkhere {
+.linkshere {
 	width: 50%;
 	margin-left: 5px;
 }
   @media (max-width: 600px), (orientation: portrait) {
-	.sidebar, .linkhere {
+	.sidebar, .linkshere {
 		margin-left: 5px;
 		float: none;
 		width: auto;
@@ -316,4 +326,9 @@ img {
 }
 .inactive {
 	display: none !important;
+}
+img.icon
+{
+	width: 1.5em;
+	vertical-align: middle;
 }
