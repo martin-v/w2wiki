@@ -876,6 +876,21 @@ if (SIDEBAR_PAGE != '')
 	print toHTML($text);
 	print "    </div>\n";
 }
+if ($action === 'view' && $_GET['linkhere'])
+{
+	print "<div class=\"linkhere\">What links here: <ul>";
+	$pagenames = getAllPageNames();
+	foreach($pagenames as $searchPage)
+	{
+		$text = file_get_contents(fileNameForPage($searchPage));
+		if ( preg_match("/\[\[$page/i", $text) )
+		{
+			$link = pageLink($searchPage, $searchPage, "");
+			print("        <li>$link</li>\n");
+		}
+	}
+	print "</ul></div>";
+}
 print "    <div class=\"main\">\n\n";
 if(isset($_SESSION['msg']) && $_SESSION['msg'] != '')
 {

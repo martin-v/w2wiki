@@ -230,21 +230,28 @@ input#gitmsg
 
 .sidebar {
 	float: right;
+}
+.sidebar, .linkhere {
 	margin-right: 5px;
 	margin-top: 5px;
 	padding: 4px;
 	border: solid 1px #666644;
 }
-  @media (max-width: 600px), (orientation: portrait) {
-	.sidebar {
-		margin-left: 5px;
-		float: none;
-	}
-  }
 .sidebar ul {
 	margin-top: 0;
 	margin-left: 4px;
 }
+.linkhere {
+	width: 50%;
+	margin-left: 5px;
+}
+  @media (max-width: 600px), (orientation: portrait) {
+	.sidebar, .linkhere {
+		margin-left: 5px;
+		float: none;
+		width: auto;
+	}
+  }
 
 input.search {
 /*	font-size: 0.95em;*/
