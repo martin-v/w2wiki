@@ -103,7 +103,7 @@ function printFooter()
 function printDrawer()
 {
 	print "<div id=\"drawer\" class=\"inactive\">".
-		"<h5>".__('Markdown Syntax Helper')."</h5><br/>".
+		"<h5>".__('Markdown Syntax Helper')."<a href=\"\" onclick=\"toggleDrawer(); return false;\"><img src=\"/icons/close.svg\" alt=\"".__('Close')."\" title=\"".__('Close')."\" class=\"icon rightaligned\"/></a></h5><div>".
 		"# ".__('Header')." 1<br/>".
 		"## ".__('Header')." 2<br/>".
 		"### ".__('Header')." 3<br/>".
@@ -133,7 +133,7 @@ function printDrawer()
 		"`inline-code`<br/><br/>".
 		"*** Horizontal rule<br/>".
 		"--- Horizontal rule</h5><br/>".
-		"</div>".
+		"</div></div>".
 		"<a id=\"drawer-control\" href=\"\" onclick=\"toggleDrawer(); return false;\"><img src=\"/icons/format-text-bold.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/icons/format-text-italic.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/icons/format-text-code.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/></span>\n";
 }
 

@@ -319,6 +319,13 @@ img {
 	border: 1px solid black;
 	border-radius: 5px;
 	margin-top: 1.8em;
+	padding: 0;
+}
+#drawer h5 {
+	border-bottom: 1px solid black;
+	padding: 4px;
+}
+#drawer div {
 	padding: 4px;
 }
 #drawer:hover {
@@ -331,4 +338,8 @@ img.icon
 {
 	width: 1.5em;
 	vertical-align: middle;
+}
+.rightaligned
+{
+	float: right;
 }
