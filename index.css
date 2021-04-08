@@ -138,7 +138,7 @@ textarea {
 	width: 75%;
 	background-color: #ffffee;
 }
-  @media only screen and (max-width: 45em) {
+  @media (max-width: 600px), (orientation: portrait) {
 	textarea {
 		width: 99%;
 	}
@@ -185,7 +185,7 @@ input#gitmsg
 	border: solid 1px #666644;
 	width: 75%;
 }
-  @media only screen and (max-width: 45em) {
+  @media (max-width: 600px), (orientation: portrait) {
 	.note {
 		width: 99%;
 	}
@@ -230,17 +230,21 @@ input#gitmsg
 
 .sidebar {
 	float: right;
-	margin-right: 2em;
-	margin-top: 1em;
-	padding: .5em;
+	margin-right: 5px;
+	margin-top: 5px;
+	padding: 4px;
 	border: solid 1px #666644;
 }
-  @media only screen and (max-width: 45em) {
+  @media (max-width: 600px), (orientation: portrait) {
 	.sidebar {
-		margin-left: 1em;
+		margin-left: 5px;
 		float: none;
 	}
   }
+.sidebar ul {
+	margin-top: 0;
+	margin-left: 4px;
+}
 
 input.search {
 /*	font-size: 0.95em;*/
