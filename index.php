@@ -80,8 +80,8 @@ function printHeader($title, $bodyclass="")
 	print "<html lang=\"" . W2_LOCALE . "\">\n";
 	print "  <head>\n";
 	print "    <meta charset=\"" . W2_CHARSET . "\">\n";
-	print "    <link rel=\"apple-touch-icon\" href=\"w2-icon.png\"/>\n";
-	print "    <link rel=\"icon\" href=\"w2-icon.png\"/>\n";
+	print "    <link rel=\"apple-touch-icon\" href=\"/icons/w2-icon.png\"/>\n";
+	print "    <link rel=\"icon\" href=\"/icons/w2-icon.png\"/>\n";
 	print "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n";
 	print "    <link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
 	print "    <title>".PAGE_TITLE."$title</title>\n";
@@ -134,7 +134,7 @@ function printDrawer()
 		"*** Horizontal rule<br/>".
 		"--- Horizontal rule</h5><br/>".
 		"</div>".
-		"<a id=\"drawer-control\" href=\"\" onclick=\"toggleDrawer(); return false;\"><img src=\"/format-text-bold.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/format-text-italic.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/format-text-code.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/></span>\n";
+		"<a id=\"drawer-control\" href=\"\" onclick=\"toggleDrawer(); return false;\"><img src=\"/icons/format-text-bold.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/icons/format-text-italic.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/icons/format-text-code.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/></span>\n";
 }
 
 if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
@@ -324,10 +324,10 @@ function getPageActions($page, $action)
 		if ($action != $pageActions[$i])
 		{
 			$result .= "      <a href=\"".SELF."?action=".$pageActions[$i].
-				"&amp;page=".urlencode($page)."\"><img src=\"/".$pageActions[$i].".svg\" alt=\"".$pageActionNames[$i]."\" title=\"".$pageActionNames[$i]."\" class=\"icon\"></a>\n";
+				"&amp;page=".urlencode($page)."\"><img src=\"/icons/".$pageActions[$i].".svg\" alt=\"".$pageActionNames[$i]."\" title=\"".$pageActionNames[$i]."\" class=\"icon\"></a>\n";
 		}
 	}
-		$result .= "      <a href=\"" . SELF . "?action=view&page=$page&linkshere=true\"><img src=\"/link.svg\" alt=\"".__('Show links here')."\" title=\"".__('Show links here')."\" class=\"icon\"/></a>\n";
+		$result .= "      <a href=\"" . SELF . "?action=view&page=$page&linkshere=true\"><img src=\"/icons/link.svg\" alt=\"".__('Show links here')."\" title=\"".__('Show links here')."\" class=\"icon\"/></a>\n";
 	return $result;
 }
 
@@ -756,100 +756,100 @@ else if ( $action === "all" )
 		$html .= "<tr>".
 			"<td>".pageLink($pageName, $pageName)."</td>".
 			"<td valign=\"top\"><nobr>".date( $date_format, $pageDate)."</nobr></td>".
-			"<td class=\"pageActions\">".getPageActions($pageName, $action)."</td>".
-			"</tr>\n";
+				"<td class=\"pageActions\">".getPageActions($pageName, $action)."</td>".
+				"</tr>\n";
+		}
+		$html .= "</tbody></table>\n";
 	}
-	$html .= "</tbody></table>\n";
-}
-else if ( $action == "search" )
-{
-	$matches = 0;
-	$q = $_REQUEST['q'];
-	$html .= "    <h1>Search: $q</h1>\n".
-		"    <ul>\n";
-
-	if ( trim($q) != "" )
+	else if ( $action == "search" )
 	{
-		$pagenames = getAllPageNames();
-		$found = FALSE;
-		foreach($pagenames as $searchPage)
+		$matches = 0;
+		$q = $_REQUEST['q'];
+		$html .= "    <h1>Search: $q</h1>\n".
+			"    <ul>\n";
+
+		if ( trim($q) != "" )
 		{
-			if ($searchPage === $q)
+			$pagenames = getAllPageNames();
+			$found = FALSE;
+			foreach($pagenames as $searchPage)
 			{
-				$found = TRUE;
-			}
-			$text = file_get_contents(fileNameForPage($searchPage));
-			if ( preg_match("/{$q}/i", $text) || preg_match("/{$q}/i", $searchPage) )
-			{
-				++$matches;
-				$link = pageLink($searchPage, $searchPage, ($searchPage === $q)? " class=\"literalMatch\"": "");
-				$html .= "        <li>$link</li>\n";
+				if ($searchPage === $q)
+				{
+					$found = TRUE;
+				}
+				$text = file_get_contents(fileNameForPage($searchPage));
+				if ( preg_match("/{$q}/i", $text) || preg_match("/{$q}/i", $searchPage) )
+				{
+					++$matches;
+					$link = pageLink($searchPage, $searchPage, ($searchPage === $q)? " class=\"literalMatch\"": "");
+					$html .= "        <li>$link</li>\n";
+				}
 			}
 		}
+		if (!$found)
+		{
+			$html .= "        <li>".pageLink($q, __('Create page')." '$q'", " class=\"noexist\"")."</li>";
+		}
+		$html .= "      </ul>\n";
+		$html .= "      <p>$matches ".__('matches')."</p>\n";
 	}
-	if (!$found)
+	else
 	{
-		$html .= "        <li>".pageLink($q, __('Create page')." '$q'", " class=\"noexist\"")."</li>";
+		$html .= empty($text) ? '' : toHTML($text);
 	}
-	$html .= "      </ul>\n";
-	$html .= "      <p>$matches ".__('matches')."</p>\n";
-}
-else
-{
-	$html .= empty($text) ? '' : toHTML($text);
-}
 
-$datetime = '';
+	$datetime = '';
 
-if ( ($action == "all"))
-{
-	$title = __("All");
-}
-else if ( $action == "upload" )
-{
-	$title = __("Upload");
-}
-else if ( $action == "new" )
-{
-	$title = __("New");
-}
-else if ( $action == "search" )
-{
-	$title = __("Search");
-}
-else if ($filename != '')
-{
-	$title = $page;
-	$date_format = __('date_format', TITLE_DATE);
-	if ( $date_format )
+	if ( ($action == "all"))
 	{
-		$datetime = "<span class=\"titledate\">" . date($date_format, @filemtime($filename)) . "</span>";
+		$title = __("All");
 	}
-}
-else
-{
-	$title = __($action);
-}
+	else if ( $action == "upload" )
+	{
+		$title = __("Upload");
+	}
+	else if ( $action == "new" )
+	{
+		$title = __("New");
+	}
+	else if ( $action == "search" )
+	{
+		$title = __("Search");
+	}
+	else if ($filename != '')
+	{
+		$title = $page;
+		$date_format = __('date_format', TITLE_DATE);
+		if ( $date_format )
+		{
+			$datetime = "<span class=\"titledate\">" . date($date_format, @filemtime($filename)) . "</span>";
+		}
+	}
+	else
+	{
+		$title = __($action);
+	}
 
-// Disable caching on the client (the iPhone is pretty agressive about this
-// and it can cause problems with the editing function)
+	// Disable caching on the client (the iPhone is pretty agressive about this
+	// and it can cause problems with the editing function)
 
-header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
-printHeader($title);
-print "    <div class=\"titlebar\"><span class=\"title\">$title</span>$datetime";
-if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action === 'edit')
-{
-	print(getPageActions($page, $action));
-}
-print "    </div>\n";
-print "    <div class=\"toolbar\">\n";
-print "      <a href=\"" . SELF . "\"><img src=\"/home.svg\" alt=\"". __(DEFAULT_PAGE) . "\" title=\"". __(DEFAULT_PAGE) . "\" class=\"icon\"></a>\n";
-print "      <a href=\"" . SELF . "?action=all\"><img src=\"/list.svg\" alt=\"". __('All') . "\" title=\"". __('All') . "\" class=\"icon\"></a>\n";
-print "      <a href=\"" . SELF . "?action=new\"><img src=\"/new.svg\" alt=\"".__('New')."\" title=\"".__('New')."\" class=\"icon\"></a>\n";
+	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+	printHeader($title);
+	print "    <div class=\"titlebar\"><span class=\"title\">$title</span>$datetime";
+	if ($action === 'view' || $action == 'rename' || $action == 'delete' || $action === 'edit')
+	{
+		print(getPageActions($page, $action));
+	}
+	print "    </div>\n";
+	print "    <div class=\"toolbar\">\n";
+	print "      <a href=\"" . SELF . "\"><img src=\"/icons/home.svg\" alt=\"". __(DEFAULT_PAGE) . "\" title=\"". __(DEFAULT_PAGE) . "\" class=\"icon\"></a>\n";
+print "      <a href=\"" . SELF . "?action=all\"><img src=\"/icons/list.svg\" alt=\"". __('All') . "\" title=\"". __('All') . "\" class=\"icon\"></a>\n";
+print "      <a href=\"" . SELF . "?action=new\"><img src=\"/icons/new.svg\" alt=\"".__('New')."\" title=\"".__('New')."\" class=\"icon\"></a>\n";
 if ( !DISABLE_UPLOADS )
 {
-	print "      <a href=\"" . SELF . VIEW . "?action=upload\"><img src=\"/upload.svg\" alt=\"".__('Upload')."\" title=\"".__('Upload')."\" class=\"icon\"/></a>\n";
+	print "      <a href=\"" . SELF . VIEW . "?action=upload\"><img src=\"/icons/upload.svg\" alt=\"".__('Upload')."\" title=\"".__('Upload')."\" class=\"icon\"/></a>\n";
 }
 if ( REQUIRE_PASSWORD )
 {

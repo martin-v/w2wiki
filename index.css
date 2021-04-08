@@ -169,7 +169,7 @@ input#gitmsg
 }
 
 .main a[href^="http"]::after {
-	content: url('internet.png');
+	content: url('/icons/internet.png');
 }
 
 .main a.literalMatch {
