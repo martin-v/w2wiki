@@ -294,10 +294,14 @@ img {
 	position: fixed;
 	width: 300px;
 	background-color: rgb(240, 240, 240);
+	opacity: 0.5;
 	border: 1px solid black;
 	border-radius: 5px;
 	margin-top: 1.8em;
 	padding: 4px;
+}
+#drawer:hover {
+	opacity: 1.0;
 }
 .inactive {
 	display: none !important;
