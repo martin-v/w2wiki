@@ -334,10 +334,15 @@ img {
 .inactive {
 	display: none !important;
 }
-img.icon
-{
+img.icon {
 	width: 1.5em;
 	vertical-align: middle;
+}
+a img.icon:hover {
+	outline: 1px outset white;
+}
+a img.icon:active {
+	outline: 1px inset white;
 }
 .rightaligned
 {
