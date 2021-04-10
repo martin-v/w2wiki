@@ -85,11 +85,7 @@ function printHeader($title, $bodyclass="")
 	print "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n";
 	print "    <link type=\"text/css\" rel=\"stylesheet\" href=\"" . BASE_URI . "/" . CSS_FILE ."\" />\n";
 	print "    <title>".PAGE_TITLE."$title</title>\n";
-	print "    <script>\n";
-	print "        function toggleDrawer(){\n";
-	print "            document.getElementById('drawer').classList.toggle('inactive');\n";
-	print "        }\n";
-	print "    </script>\n";
+	print "    <script src=\"wiki.js\"></script>\n";
 	print "  </head>\n";
 	print "  <body".($bodyclass != "" ? " class=\"$bodyclass\"":"").">\n";
 }
@@ -134,7 +130,7 @@ function printDrawer()
 		"*** Horizontal rule<br/>".
 		"--- Horizontal rule</h5><br/>".
 		"</div></div>".
-		"<a id=\"drawer-control\" href=\"\" onclick=\"toggleDrawer(); return false;\"><img src=\"/icons/format-text-bold.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/icons/format-text-italic.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/icons/format-text-code.svg\" alt=\"".__('Show links here')."\" title=\"".__('Formatting help')."\" class=\"icon\"/></span>\n";
+		"<a id=\"drawer-control\" href=\"\" onclick=\"toggleDrawer(); return false;\"><span class=\"icongroup\"><img src=\"/icons/format-text-bold.svg\" alt=\"".__('Formatting help')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/icons/format-text-italic.svg\" alt=\"".__('Formatting help')."\" title=\"".__('Formatting help')."\" class=\"icon\"/><img src=\"/icons/format-text-code.svg\" alt=\"".__('Formatting help')."\" title=\"".__('Formatting help')."\" class=\"icon\"/></span></a>\n";
 }
 
 if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )

@@ -312,14 +312,14 @@ img {
 
 #drawer {
 	display: inline-block;
-	position: fixed;
+	position: absolute;
 	width: 300px;
 	background-color: rgb(240, 240, 240);
 	opacity: 0.5;
 	border: 1px solid black;
 	border-radius: 5px;
-	margin-top: 1.8em;
 	padding: 0;
+	cursor: move;
 }
 #drawer h5 {
 	border-bottom: 1px solid black;
@@ -338,10 +338,10 @@ img.icon {
 	width: 1.5em;
 	vertical-align: middle;
 }
-a img.icon:hover {
+a > img.icon:hover, a > span.icongroup:hover {
 	outline: 1px outset white;
 }
-a img.icon:active {
+a > img.icon:active, a > span.icongroup:active {
 	outline: 1px inset white;
 }
 .rightaligned
