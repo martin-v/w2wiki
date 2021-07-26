@@ -148,7 +148,7 @@ textarea {
 	width: 75%;
 	background-color: #ffffee;
 }
-  @media (max-width: 600px), (orientation: portrait) {
+  @media (max-width: 600px), (orientation: portrait) and (max-width: 40rem) {
 	textarea {
 		width: 99%;
 	}
@@ -195,7 +195,7 @@ input#gitmsg
 	border: solid 1px #666644;
 	width: 75%;
 }
-  @media (max-width: 600px), (orientation: portrait) {
+  @media (max-width: 600px), (orientation: portrait) and (max-width: 40rem) {
 	.note {
 		width: 99%;
 	}
@@ -255,7 +255,7 @@ input#gitmsg
 	width: 50%;
 	margin-left: 5px;
 }
-  @media (max-width: 600px), (orientation: portrait) {
+  @media (max-width: 600px), (orientation: portrait) and (max-width: 40rem) {
 	.sidebar, .linkshere {
 		margin-left: 5px;
 		float: none;
