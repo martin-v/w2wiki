@@ -137,9 +137,11 @@ table {
 	padding-right: 8px;
 }
   tr:nth-child(even) .pageActions {
+	color: white;
 	background-color: rgb(80, 80, 80);
   }
   tr:nth-child(odd) .pageActions {
+	color: white;
 	background-color: rgb(40, 40, 40);
   }
 
